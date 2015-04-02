@@ -29,24 +29,31 @@
 <h2>
 <a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>SUMMARY</h2>
 
-<p>We are going to implement a Python module for helping programmers to parallelize their code by comments, like “#pragma omp parallel for” tag  in OpenMP.</p>
+<p>We are going to implement a Python module for helping programmers to parallelize their code using simple comments, like “#pragma omp parallel for” in OpenMP.</p>
 
 <p>Our target is making the module based on pure Python, so users will not need to acquire other frameworks except installing our module.</p>
+
+<p>We will also running several workloads for verify how our module can enhance the program's performance.</p>
 
 <h2>
 <a id="background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>BACKGROUND</h2>
 
-<p>One of  promising features of OpenMP is the easiness to make . All it needs is annotations to tag the block to be in parallel. Due to Global Interpreter Lock mechanism in Python, to our best knowledge, there is no naive way which enables standard Python to integrate with OpenMP. The programmers need to learn Cython language or new parallel Python frameworks, which spends much extra effort. </p>
+<p>One of the promising features in OpenMP is the easiness to program. All programers need to do is adding annotations to tag the block to parallel. Due to Global Interpreter Lock mechanism in Python, to our best knowledge, there is no naive way which enables standard Python to integrate with OpenMP. The programmers need to learn Cython language or new parallel Python frameworks, which takes much extra effort. </p>
 
-<p>We plan to design a python-to-python compiler which translates original python code to a parallelized code: from tagged for loop code to multi-process code (like Pool().map()). With our “compiler”, the users can make their code into parallelized code easily by adding just annotations near the for loop. </p>
+<p>We plan to design a python-to-python compiler which transforms original python code to a parallelized version: "for" loop code to multi-process code (like Pool().map()). </p>
 
-<p>We think that the programs with cpu intensive jobs on multiple data can benefit from PyMP. Because we plan to uses multi-process to run a for loop in parallel, in which multi-process can generate overhead(e.g. scattering variables, gathering return values). If the computation is light in each iteration, PyMP may spend most of time to make it run in multi-process and cannot get beneficial from parallel running. On the other side, the cpu intensive jobs can get beneficial from multi-process in parallel, like Mandelbort.</p>
+<p>With our “compiler”, the users can optimize the code to its parallelized version easily by just adding annotations on the for loop. </p>
+
+<p>We expect that the programs with cpu intensive jobs on multiple data can benefit from PyMP the most. Like Mandelbort. In other scenario, multi-process version could generate extra overhead(e.g. scattering variables, gathering return values). For example, if the computation is light in each iteration, PyMP may spend most of time to schedule and cannot get beneficial from parallel.</p>
 
 <h2>
 <a id="the-challenge" class="anchor" href="#the-challenge" aria-hidden="true"><span class="octicon octicon-link"></span></a>THE CHALLENGE</h2>
 
-<p>“Compile” code blocks with annotation into parallel code. Currently we plan to apply a 3-steps methodology. First, functions in our module check for any recognizable annotations and re-write corresponding blocks into parallel functions. Second, link this parallel functions back into the original code to replace the old blocks and add any necessary control checks. Third, do normal compile or directly execute the modified Python code.
-Implement basic scheduling mechanism. We should at least support reasonable static scheduler. If possible, we would like to try to support dynamical scheduler as well.</p>
+<p>“Compile” code blocks with annotation into parallel code. Currently we plan to apply a 3-steps methodology.</p>
+<p>First, functions in our module check for any recognizable annotations and re-write corresponding blocks into parallel functions.</p>
+<p>Second, link this parallel functions back into the original code to replace the old blocks and add any necessary control checks.</p>
+<p>Third, do normal compile or directly execute the modified Python code. </p>
+<p>Implement basic scheduling mechanism. We should at least support reasonable static scheduler. If possible, we would like to try to support dynamical scheduler as well. We expect obvious performance enhancement. But that could be challenging. </p>
 
 <h2>
 <a id="resources" class="anchor" href="#resources" aria-hidden="true"><span class="octicon octicon-link"></span></a>RESOURCES</h2>
@@ -59,8 +66,8 @@ Implement basic scheduling mechanism. We should at least support reasonable stat
 <a id="goals-and-deliverables" class="anchor" href="#goals-and-deliverables" aria-hidden="true"><span class="octicon octicon-link"></span></a>GOALS AND DELIVERABLES</h2>
 
 <ul>
-<li>We will develop a “compiler” which can translate a Python code in parallel</li>
-<li>We will compare the speedup curve between our auto-generated code and sophisticated hand crafted code in several applications</li>
+<li>Develop a “compiler” which can translate a Python code in parallel</li>
+<li>Compare the speedup curve between our auto-generated code and sophisticated hand crafted code in several applications</li>
 <li>We hope to develop some sophisticated parallel options for users to specify (e.g. dynamic scheduling)</li>
 <li>We hope to compare the speedup curve between our our auto-generated code and c openmp code in several applications</li>
 </ul>
@@ -68,7 +75,8 @@ Implement basic scheduling mechanism. We should at least support reasonable stat
 <h2>
 <a id="platform-choice" class="anchor" href="#platform-choice" aria-hidden="true"><span class="octicon octicon-link"></span></a>PLATFORM CHOICE</h2>
 
-<p>Python, because it is a widely used programming language. </p>
+<p>Python, because it is a widely used programming language which does not provide an easy way to implement parallel functions.</p>
+<p>We expect the module could help to ease programming as well as optimize program performance. </p>
 
 <h2>
 <a id="schedule" class="anchor" href="#schedule" aria-hidden="true"><span class="octicon octicon-link"></span></a>SCHEDULE</h2>
