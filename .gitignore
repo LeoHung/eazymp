@@ -2,3 +2,4 @@ env/
 *.png
 .DS_Store
 *.swp
+*.pyc
