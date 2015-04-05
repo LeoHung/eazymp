@@ -293,13 +293,13 @@ class Translator:
     def header(self):
         self.writer.write(
             Template.import_moudle(
-                package="pymp.helpers",
+                package="lazymp.helpers",
                 module="join_dict"
             )
         )
         self.writer.write(
             Template.import_moudle(
-                package="pymp.helpers",
+                package="lazymp.helpers",
                 module="join_shared"
             )
         )
