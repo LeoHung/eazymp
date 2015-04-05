@@ -1,5 +1,5 @@
-from pymp.helpers import join_dict
-from pymp.helpers import join_shared
+from lazymp.helpers import join_dict
+from lazymp.helpers import join_shared
 from PIL import Image
 from datetime import datetime
 
