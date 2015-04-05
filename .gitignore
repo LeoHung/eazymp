@@ -3,3 +3,6 @@ env/
 .DS_Store
 *.swp
 *.pyc
+PyMP.egg-info
+dist/
+build/
