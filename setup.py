@@ -27,7 +27,7 @@ setup(
     # metadata for upload to PyPI
     author = "San-Chuan Hung",
     author_email = "sanchuah@andrew.cmu.edu",
-    description = "This is an Example Package",
+    description = "A lazy way to make your Python code in parallel",
     license = "MIT",
     keywords = "easy lazy openmp parallel",
     url = "http://leohung.net/pymp",   # project home page, if any
