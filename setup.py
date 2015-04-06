@@ -1,11 +1,4 @@
-#from setuptools import setup, find_packages
-try:
-    from setuptools import setup
-    has_setuptools = True
-except ImportError:
-    from distutils.core import setup
-    has_setuptools = False
-
+from setuptools import setup, find_packages
 
 setup(
     name = "lazymp",
