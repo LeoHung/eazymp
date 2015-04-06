@@ -1,8 +1,17 @@
-from setuptools import setup, find_packages
+#from setuptools import setup, find_packages
+try:
+    from setuptools import setup
+    has_setuptools = True
+except ImportError:
+    from distutils.core import setup
+    has_setuptools = False
+
+
 setup(
     name = "lazymp",
     version = "0.1.0.0.3",
-    packages = find_packages(),
+    #packages = find_packages(),
+    packages =['lazymp'],
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
     install_requires = [
@@ -23,6 +32,12 @@ setup(
         "https://github.com/uqfoundation/pathos/raw/master/external/processing-0.52-pathos.zip",
         "git+https://github.com/uqfoundation/pathos#egg=pathos-0.2a1.dev0"
     ],
+
+    entry_points = {
+        'console_scripts': [
+            'lazymp = lazymp.main:run',                  
+        ],              
+    },
 
     # metadata for upload to PyPI
     author = "San-Chuan Hung",
