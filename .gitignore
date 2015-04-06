@@ -7,3 +7,4 @@ PyMP.egg-info
 dist/
 build/
 .pypirc
+lazymp.egg-info
