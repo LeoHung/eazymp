@@ -191,7 +191,7 @@ class Translator:
         self.writer = Writer(outputfilename)
         self.state = STATE.NORMAL
         self.shared_variables = SharedVariables()
-        self.threads = 4
+        self.threads = 16
 
     def process_parallel_for(self, line, struct):
         # parallel for 
@@ -334,8 +334,18 @@ def translate(inputfilename, outputfilename):
     translator.run()
     translator.close()
 
+def run():
+    import sys
+    inputfilename = sys.argv[1] 
+    tmp_outputfilename = "tmp."+ inputfilename 
+    translate(inputfilename, tmp_outputfilename)
+    import os 
+    os.system("python "+tmp_outputfilename)
+    os.remove(tmp_outputfilename)
+
 if __name__ == "__main__":
     import sys
-    inputfilename = sys.argv[1]
-    outputfilename = sys.argv[2]
-    translate(inputfilename, outputfilename)
+    #inputfilename = sys.argv[1]
+    #outputfilename = sys.argv[2]  
+    #translate(inputfilename, outputfilename) 
+    run()
