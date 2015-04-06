@@ -64,11 +64,15 @@ if __name__ == "__main__":
     data_map= run_slow_mandelbrot(size_x, size_y)
     end = datetime.now()
     print "slow runtime: %s" % str(end-start)
+    slow_time = (end-start).total_seconds()
     save_png("slow-"+filename, data_map, size_x, size_y)    
 
     # multi-process version
     start = datetime.now()
     data_map= run_mandelbrot(size_x, size_y)
     end = datetime.now()
+    fast_time = (end-start).total_seconds()
     print "fast runtime: %s" % str(end-start)
     save_png("mp-"+filename, data_map, size_x, size_y)    
+
+    print "improvement: %f" %( slow_time / fast_time )
