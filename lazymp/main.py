@@ -1,4 +1,5 @@
-import re 
+import re
+
 
 class SharedVariables:
     def __init__(self):
@@ -12,6 +13,7 @@ class SharedVariables:
 
     def clean(self):
         self.shared = {}
+
 
 class Parser:
     space_prog = re.compile("^( *)[^ ]*")
@@ -31,8 +33,8 @@ class Parser:
         else:
             line, line_struct = self.parse_line(line)
 
-            return line, {'indention' : line_struct['indention'], 
-                            "variable": tmp.group(1), 
+            return line, {'indention' : line_struct['indention'],
+                            "variable": tmp.group(1),
                             "iterate_list": tmp.group(2)}
 
     def parse_blcok(self):
@@ -67,16 +69,16 @@ class Parser:
 
         # last line
         if self.line == '':
-            return None, None  
+            return None, None
 
         self.line = self.line[:-1]
 
         return self.parse_line(self.line)
 
     def parse_line(self, line):
-        # indention 
+        # indention
         space_match = Parser.space_prog.match(self.line)
-        indention = 0 
+        indention = 0
         if space_match is not None:
             indention = len(space_match.group(1))
 
@@ -101,13 +103,14 @@ class Parser:
             tokens.append(split_tmp[i])
 
         return self.line, {
-                            "indention": indention, 
-                            "comment": comment, 
-                            "tokens": tokens, 
+                            "indention": indention,
+                            "comment": comment,
+                            "tokens": tokens,
                             "pragma_tokens": pragma_tokens
                             }
     def close(self):
         self.f.close()
+
 
 class Writer:
     def __init__(self, outputfilename):
@@ -123,13 +126,16 @@ class Writer:
     def close(self):
         self.f.close()
 
+
 class Template:
     @staticmethod
     def def_function(variable, function_name, indention=0):
         return "%sdef %s(%s):" %(" " * indention, function_name, variable)
+
     @staticmethod
     def define_variable(left, right, indention=0):
         return "%s%s = %s" %(" " * indention, left, right)
+
     @staticmethod
     def return_variable(variable, indention=0):
         return "%sreturn %s" % (" "*indention, variable)
@@ -141,12 +147,12 @@ class Template:
             if abbr is None:
                 return "%simport %s" %(indention_str, module)
             else:
-                return "%simport %s as %s" %(indention_str, module, abbr)            
+                return "%simport %s as %s" %(indention_str, module, abbr)
         else:
             if abbr is None:
                 return "%sfrom %s import %s" %(indention_str, package, module)
             else:
-                return "%sfrom %s import %s as %s" %(indention_str, package, module, abbr) 
+                return "%sfrom %s import %s as %s" %(indention_str, package, module, abbr)
 
     @staticmethod
     def execute_function(function_name, variables, indention=0):
@@ -156,19 +162,22 @@ class Template:
             variables_str = ", ".join(variables)
         return "%s%s(%s)" % (" "* indention, function_name, variables_str)
 
+
 class Annotation:
     PREFIX = "#pragma"
     SHARED_VARIABLES = "#pragma shared"
     PARALLEL_FOR = "#pragma omp parallel for"
 
+
 class STATE:
     NORMAL = 1
     PARALLEL_FOR = 2
 
+
 class PragmaTranslator:
     parallel_prog = re.compile(Annotation.PARALLEL_FOR)
     shared_variables_prog = re.compile(Annotation.SHARED_VARIABLES)
-    PARALLEL_FOR = 1 
+    PARALLEL_FOR = 1
     SHARED_VARIABLES = 2
     ELSE = 3
 
@@ -177,30 +186,35 @@ class PragmaTranslator:
         command = " ".join(pragma_tokens)
         tmp = PragmaTranslator.parallel_prog.match(command)
         if tmp is not None:
-            return PragmaTranslator.PARALLEL_FOR 
-        
+            return PragmaTranslator.PARALLEL_FOR
+
         tmp = PragmaTranslator.shared_variables_prog.match(command)
         if tmp is not None:
             return PragmaTranslator.SHARED_VARIABLES
-        
+
         return PragmaTranslator.ELSE
 
+
 class Translator:
-    def __init__(self, inputfilename, outputfilename):
+    def __init__(self, inputfilename, outputfilename, p=0):
         self.parser = Parser(inputfilename)
         self.writer = Writer(outputfilename)
         self.state = STATE.NORMAL
         self.shared_variables = SharedVariables()
-        self.threads = 16
+        if p < 1:
+            import multiprocessing
+            self.threads = multiprocessing.cpu_count()
+        else:
+            self.threads = p
 
     def process_parallel_for(self, line, struct):
-        # parallel for 
+        # parallel for
         parallel_line, parallel_struct = self.parser.parse_for(line)
         if parallel_line is None:
             # cannot parse parallel for correctly
             self.writer.write(line)
         else:
-            # parse block 
+            # parse block
             block, block_struct = self.parser.parse_blcok()
             # rewrite code
             self.writer.write(
@@ -210,7 +224,7 @@ class Translator:
                     indention=parallel_struct['indention']
                 )
             )
-            # insert registered code 
+            # insert registered code
             self.writer.write(
                 Template.define_variable(
                     left = "__shared__",
@@ -218,7 +232,7 @@ class Translator:
                     indention=block_struct['indention']
                 )
             )
-            # import copy 
+            # import copy
             self.writer.write(
                 Template.import_moudle(
                     module="copy",
@@ -231,24 +245,24 @@ class Translator:
                     Template.define_variable(
                         left = "__shared__['%s']" % registered_variable,
                         right = "copy.deepcopy(%s)" % registered_variable,
-                        indention=block_struct['indention'] 
+                        indention=block_struct['indention']
                     )
                 )
 
-            # insert block, replace register variable with __shared['%s'] 
+            # insert block, replace register variable with __shared['%s']
             block_text = "\n".join(block)
             for registered_variable in self.shared_variables.dump():
-                block_text = block_text.replace(registered_variable, "__shared__['%s']" % registered_variable) 
+                block_text = block_text.replace(registered_variable, "__shared__['%s']" % registered_variable)
             self.writer.write(block_text)
 
-            # insert footer 
+            # insert footer
             self.writer.write(
                 Template.return_variable(
                     variable="__shared__",
                     indention=block_struct['indention']
                 )
             )
-            # insert import 
+            # insert import
             self.writer.write(
                 Template.import_moudle(
                     package="pathos.multiprocessing",
@@ -261,15 +275,15 @@ class Translator:
                     Template.define_variable(
                         left = "__shared__",
                         right = "ProcessingPool(%d).map(core, %s)" %(
-                            self.threads, 
+                            self.threads,
                             parallel_struct['iterate_list']),
-                        indention=parallel_struct['indention'] 
+                        indention=parallel_struct['indention']
                     )
             )
-            # insert Merge function 
+            # insert Merge function
             tmp_list =[ ]
             for registered_variable in self.shared_variables.dump():
-                tmp_list.append("'%s': %s" % (registered_variable, registered_variable) )     
+                tmp_list.append("'%s': %s" % (registered_variable, registered_variable) )
             registered_variable_dict_str = "{ %s }" %(", ".join(tmp_list))
 
             self.writer.write(
@@ -284,7 +298,7 @@ class Translator:
         # need to check token struct first
         assert re.search("[^=]+=[^ ]+", line) ==None, "'%s' is not a delaration of variable."
 
-        # parse variable name 
+        # parse variable name
         variable = struct['tokens'][0]
 
         # register
@@ -329,23 +343,39 @@ class Translator:
         self.parser.close()
         self.writer.close()
 
-def translate(inputfilename, outputfilename):
-    translator = Translator(inputfilename, outputfilename)
+
+def translate(inputfilename, outputfilename, p):
+    translator = Translator(inputfilename, outputfilename, p)
     translator.run()
     translator.close()
 
+
 def run():
     import sys
-    inputfilename = sys.argv[1] 
-    tmp_outputfilename = "tmp."+ inputfilename 
-    translate(inputfilename, tmp_outputfilename)
-    import os 
-    os.system("python "+tmp_outputfilename)
+    from optparse import OptionParser
+    parser = OptionParser()
+    parser.add_option("-p", type="int", dest="p", default=-1)
+    (options, args) = parser.parse_args()
+
+    inputfilename_i = 0
+    for a_i in xrange(1, len(sys.argv)):
+        if sys.argv[a_i][0] == "-":
+            continue
+        else:
+            inputfilename_i = a_i
+            break
+
+    inputfilename = sys.argv[inputfilename_i]
+    tmp_outputfilename = "tmp." + inputfilename
+    translate(inputfilename, tmp_outputfilename, options.p)
+    import os
+    if len(sys.argv) >= inputfilename_i + 1:
+        rest_options = " ".join(sys.argv[inputfilename_i + 1:])
+    else:
+        rest_options = ""
+
+    os.system("python " + tmp_outputfilename + " " + rest_options)
     os.remove(tmp_outputfilename)
 
 if __name__ == "__main__":
-    import sys
-    #inputfilename = sys.argv[1]
-    #outputfilename = sys.argv[2]  
-    #translate(inputfilename, outputfilename) 
     run()
