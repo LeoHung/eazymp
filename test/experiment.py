@@ -1,6 +1,5 @@
 from datetime import datetime
 from os import system
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -27,6 +26,7 @@ class Experiment:
         return (base_runtime, compare_runtimes)
 
     def plot(self, filename):
+        import matplotlib.pyplot as plt
         base_runtime, compare_runtimes = self.run()
 
         all_runtimes = []
