@@ -46,6 +46,11 @@ int main(int argc, char **argv){
     Data * tmp;
     Data ** data;
 
+    if(argc < 2){
+        printf("[Error] please specify the size of mandelbrot.\n");
+        exit(0);
+    }
+
     size_x = atoi(argv[1]);
     size_y = atoi(argv[1]);
 
@@ -55,7 +60,7 @@ int main(int argc, char **argv){
         data[row] = (Data *) malloc(sizeof(Data) * size_y);
     }
 
-
+    #pragma omp parallel for
     for(row = 0; row < size_x; row++){
         for(col = 0; col < size_y; col++){
             tmp = mandelbrot(row, col, size_x, size_y);
