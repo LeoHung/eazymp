@@ -45,8 +45,8 @@ def mandelbrot(row, col, size_x, size_y):
 def run_mandelbrot(size_x, size_y):
     data = {}  #pragma shared
 
-    for row in range(size_x):  #pragma omp parallel for
-        for col in range(size_y):
+    for row in xrange(size_x):  #pragma omp parallel for
+        for col in xrange(size_y):
             tmp = mandelbrot(row, col, size_x, size_y)
             data[(row, col)] = (tmp[0], tmp[1], tmp[2])
 
@@ -78,10 +78,10 @@ if __name__ == "__main__":
     #     save_png("slow-" + filename, data_map, size_x, size_y)
 
     # multi-process version
-    start = datetime.now()
+    # start = datetime.now()
     data_map = run_mandelbrot(size_x, size_y)
-    end = datetime.now()
-    fast_time = (end - start).total_seconds()
+    # end = datetime.now()
+    # fast_time = (end - start).total_seconds()
     # print "runtime: %s" % str(end - start)
     if IS_TEST:
         save_png("mp-" + filename, data_map, size_x, size_y)
