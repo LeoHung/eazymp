@@ -61,7 +61,7 @@ int main(int argc, char **argv){
         data[row] = (Data *) malloc(sizeof(Data) * size_y);
     }
 
-    #pragma omp parallel for private(col) private(row) private(tmp)
+    #pragma omp parallel for schedule(static)
     for(row = 0; row < size_x; row++){
         for(col = 0; col < size_y; col++){
             tmp = mandelbrot(row, col, size_x, size_y);
@@ -70,12 +70,10 @@ int main(int argc, char **argv){
             data[row][col].b = tmp->b;
         }
     }
-    //#pragma omp barrier  
+    
     //for(row = 0; row < size_x; row++){
     //    free(data[row]);
     //}
     free(data);
-    
-    //printf("Testing\n");
     return 0;
 }

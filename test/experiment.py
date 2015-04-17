@@ -21,8 +21,8 @@ class Experiment:
 
         compare_runtimes = []
         for compare_desc in self.compare_descs:
+            #print compare_desc.cmd
             compare_runtimes.append(evaluate(compare_desc.cmd))
-
         return (base_runtime, compare_runtimes)
 
     def plot(self, filename):
@@ -65,7 +65,8 @@ class Experiment:
 
 
 def evaluate(command):
+    import os
     start_time = datetime.now()
-    system(command)
+    os.system(command)
     end_time = datetime.now()
     return (end_time - start_time).total_seconds()
