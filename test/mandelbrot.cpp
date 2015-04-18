@@ -42,9 +42,6 @@ Data* mandelbrot(int row, int col, int size_x, int size_y){
 int main(int argc, char **argv){
     int size_x = 0;
     int size_y = 0;
-    int row = 0;
-    int col = 0;
-    Data * tmp;
     Data ** data;
 
     if(argc < 2){
@@ -57,14 +54,14 @@ int main(int argc, char **argv){
 
     data = (Data **) malloc(sizeof(Data *) * size_x);
 
-    for(row = 0; row < size_x; row++){
+    for(int row = 0; row < size_x; row++){
         data[row] = (Data *) malloc(sizeof(Data) * size_y);
     }
 
-    #pragma omp parallel for private(col) private(row) private(tmp)
-    for(row = 0; row < size_x; row++){
-        for(col = 0; col < size_y; col++){
-            tmp = mandelbrot(row, col, size_x, size_y);
+    #pragma omp parallel for
+    for(int row = 0; row < size_x; row++){
+        for(int col = 0; col < size_y; col++){
+            Data *tmp = mandelbrot(row, col, size_x, size_y);
             data[row][col].r = tmp->r;
             data[row][col].g = tmp->g;
             data[row][col].b = tmp->b;
