@@ -61,15 +61,19 @@
     </div><!-- /.carousel -->
 
     <div class="container">
-      <h2>
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+
+      <h2 class="featurette-heading">
 <a id="authors" class="anchor" href="#authors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors</h2>
 
 <p>San-Chuan Hung (sanchuah at andrew.cmu.edu)</p>
 
 <p>Jiajun Wang (jiajunwa at andrew.cmu.edu)</p>
 
-<h2>
-<a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>SUMMARY</h2>
+<h2 class="featurette-heading">
+<a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h2>
 
 <p>We are going to implement a Python module for helping programmers to parallelize their code using simple comments, like “#pragma omp parallel for” in OpenMP.</p>
 
@@ -77,8 +81,8 @@
 
 <p>We will also running several workloads for verify how our module can enhance the program's performance.</p>
 
-<h2>
-<a id="background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>BACKGROUND</h2>
+<h2 class="featurette-heading">
+<a id="background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background</h2>
 
 <p>One of the promising features in OpenMP is the easiness to program. All programers need to do is adding annotations to tag the block to parallel. Due to Global Interpreter Lock mechanism in Python, to our best knowledge, there is no naive way which enables standard Python to integrate with OpenMP. The programmers need to learn Cython language or new parallel Python frameworks, which takes much extra effort. </p>
 
@@ -88,8 +92,8 @@
 
 <p>We expect that the programs with cpu intensive jobs on multiple data can benefit from PyMP the most. Like Mandelbort. In other scenario, multi-process version could generate extra overhead(e.g. scattering variables, gathering return values). For example, if the computation is light in each iteration, PyMP may spend most of time to schedule and cannot get beneficial from parallel.</p>
 
-<h2>
-<a id="the-challenge" class="anchor" href="#the-challenge" aria-hidden="true"><span class="octicon octicon-link"></span></a>THE CHALLENGE</h2>
+<h2 class="featurette-heading">
+<a id="the-challenge" class="anchor" href="#the-challenge" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Challenge</h2>
 
 <p>“Compile” code blocks with annotation into parallel code. Currently we plan to apply a 3-steps methodology.</p>
 <p>First, functions in our module check for any recognizable annotations and re-write corresponding blocks into parallel functions.</p>
@@ -97,15 +101,15 @@
 <p>Third, do normal compile or directly execute the modified Python code. </p>
 <p>Implement basic scheduling mechanism. We should at least support reasonable static scheduler. If possible, we would like to try to support dynamical scheduler as well. We expect obvious performance enhancement. But that could be challenging. </p>
 
-<h2>
-<a id="resources" class="anchor" href="#resources" aria-hidden="true"><span class="octicon octicon-link"></span></a>RESOURCES</h2>
+<h2 class="featurette-heading">
+<a id="resources" class="anchor" href="#resources" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resources</h2>
 
 <p>One server in GHC with 8-16 cores would be enough for our project.</p>
 
 <p>We have implemented MPI-version kmeans in Python in last semester 15640 course. Maybe we can use it to do some experiments for comparison.</p>
 
-<h2>
-<a id="goals-and-deliverables" class="anchor" href="#goals-and-deliverables" aria-hidden="true"><span class="octicon octicon-link"></span></a>GOALS AND DELIVERABLES</h2>
+<h2 class="featurette-heading">
+<a id="goals-and-deliverables" class="anchor" href="#goals-and-deliverables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Goals and Deliverables</h2>
 
 <ul>
 <li>Develop a “compiler” which can translate a Python code in parallel</li>
@@ -114,14 +118,14 @@
 <li>We hope to compare the speedup curve between our our auto-generated code and c openmp code in several applications</li>
 </ul>
 
-<h2>
-<a id="platform-choice" class="anchor" href="#platform-choice" aria-hidden="true"><span class="octicon octicon-link"></span></a>PLATFORM CHOICE</h2>
+<h2 class="featurette-heading">
+<a id="platform-choice" class="anchor" href="#platform-choice" aria-hidden="true"><span class="octicon octicon-link"></span></a>Platform Choice</h2>
 
 <p>Python, because it is a widely used programming language which does not provide an easy way to implement parallel functions.</p>
 <p>We expect the module could help to ease programming as well as optimize program performance. </p>
 
-<h2>
-<a id="schedule" class="anchor" href="#schedule" aria-hidden="true"><span class="octicon octicon-link"></span></a>SCHEDULE</h2>
+<h2 class="featurette-heading">
+<a id="schedule" class="anchor" href="#schedule" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schedule</h2>
 
 <ul>
 <li>Thu April 3th to 10th
@@ -167,6 +171,10 @@
 
         <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
+
+      </div>
+
+      <div class="col-md-1"></div>
 
     </div>
 

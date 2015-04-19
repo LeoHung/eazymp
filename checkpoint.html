@@ -76,6 +76,8 @@
         </div>
       </div>
 
+
+
       <div class="row">
         <div class="col-md-12">
           <h2 class="featurette-heading">LazyMP Translator</h2>
@@ -83,8 +85,6 @@
       </div>
 
       <div class="row">
-
-
         <div class="col-md-6">
           <p class="lead">
             LazyMP currently can support "#pragma omp parallel for" syntax. It translates a for-loop into ProcessPool().map() pattern, which first defines inner block as a core function and then uses ProcessPool().map() to fork multiple processes to execute the core function with differet elements in iterations to make it run in parallel.
