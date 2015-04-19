@@ -1,134 +1,169 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <title>PyMP</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>LazyMP</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styles for this template -->
+    <link href="carousel.css" rel="stylesheet">
   </head>
+<!-- NAVBAR
+================================================== -->
   <body>
-    <section class="page-header">
-      <h1 class="project-name">PyMP</h1>
-      <h2 class="project-tagline">A lazy way to make your Python code in parallel</h2>
-      <a href="https://github.com/LeoHung/pymp" class="btn">View on GitHub</a>
-      <a href="https://github.com/LeoHung/pymp/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/LeoHung/pymp/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+    <div class="navbar-wrapper">
+      <div class="container">
 
-    <section class="main-content">
-      <h2>
-<a id="authors" class="anchor" href="#authors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors</h2>
+        <nav class="navbar navbar-inverse navbar-static-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">LazyMP</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="proposal.html">Proposal</a></li>
+                <li><a href="checkpoint.html">Check Point</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
 
-<p>San-Chuan Hung (sanchuah at andrew.cmu.edu)</p>
+      </div>
+    </div>
 
-<p>Jiajun Wang (jiajunwa at andrew.cmu.edu)</p>
 
-<h2>
-<a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>SUMMARY</h2>
+    <!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <!-- <img class="first-slide" src="image/rocket.jpg" alt="First slide"> -->
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>LazyMP</h1>
+              <p>Make your python script running in parallel with few annotations.</p>
+              <p><a class="btn btn-lg btn-primary" href="https://github.com/LeoHung/pymp/" role="button">View in Github</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.carousel -->
 
-<p>We are going to implement a Python module for helping programmers to parallelize their code using simple comments, like “#pragma omp parallel for” in OpenMP.</p>
 
-<p>Our target is making the module based on pure Python, so users will not need to acquire other frameworks except installing our module.</p>
+    <!-- Marketing messaging and featurettes
+    ================================================== -->
+    <!-- Wrap the rest of the page in another container to center all the content. -->
 
-<p>We will also running several workloads for verify how our module can enhance the program's performance.</p>
+    <div class="container marketing">
 
-<h2>
-<a id="background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>BACKGROUND</h2>
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+        <div class="col-lg-4">
+          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+          <h2>Less Code</h2>
+          <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+          <h2>Run Fast</h2>
+          <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+          <h2>Easy to Use</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
 
-<p>One of the promising features in OpenMP is the easiness to program. All programers need to do is adding annotations to tag the block to parallel. Due to Global Interpreter Lock mechanism in Python, to our best knowledge, there is no naive way which enables standard Python to integrate with OpenMP. The programmers need to learn Cython language or new parallel Python frameworks, which takes much extra effort. </p>
 
-<p>We plan to design a python-to-python compiler which transforms original python code to a parallelized version: "for" loop code to multi-process code (like Pool().map()). </p>
+      <!-- START THE FEATURETTES -->
 
-<p>With our “compiler”, the users can optimize the code to its parallelized version easily by just adding annotations on the for loop. </p>
+      <hr class="featurette-divider">
 
-<p>We expect that the programs with cpu intensive jobs on multiple data can benefit from PyMP the most. Like Mandelbort. In other scenario, multi-process version could generate extra overhead(e.g. scattering variables, gathering return values). For example, if the computation is light in each iteration, PyMP may spend most of time to schedule and cannot get beneficial from parallel.</p>
+      <div class="row featurette">
+        <div class="col-md-7">
+          <h2 class="featurette-heading">First featurette heading. <span class="text-muted">It'll blow your mind.</span></h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+        </div>
+        <div class="col-md-5">
+          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+        </div>
+      </div>
 
-<h2>
-<a id="the-challenge" class="anchor" href="#the-challenge" aria-hidden="true"><span class="octicon octicon-link"></span></a>THE CHALLENGE</h2>
+      <hr class="featurette-divider">
 
-<p>“Compile” code blocks with annotation into parallel code. Currently we plan to apply a 3-steps methodology.</p>
-<p>First, functions in our module check for any recognizable annotations and re-write corresponding blocks into parallel functions.</p>
-<p>Second, link this parallel functions back into the original code to replace the old blocks and add any necessary control checks.</p>
-<p>Third, do normal compile or directly execute the modified Python code. </p>
-<p>Implement basic scheduling mechanism. We should at least support reasonable static scheduler. If possible, we would like to try to support dynamical scheduler as well. We expect obvious performance enhancement. But that could be challenging. </p>
+      <div class="row featurette">
+        <div class="col-md-7 col-md-push-5">
+          <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+        </div>
+        <div class="col-md-5 col-md-pull-7">
+          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+        </div>
+      </div>
 
-<h2>
-<a id="resources" class="anchor" href="#resources" aria-hidden="true"><span class="octicon octicon-link"></span></a>RESOURCES</h2>
+      <hr class="featurette-divider">
 
-<p>One server in GHC with 8-16 cores would be enough for our project.</p>
+      <div class="row featurette">
+        <div class="col-md-7">
+          <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+        </div>
+        <div class="col-md-5">
+          <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+        </div>
+      </div>
 
-<p>We have implemented MPI-version kmeans in Python in last semester 15640 course. Maybe we can use it to do some experiments for comparison.</p>
+      <hr class="featurette-divider">
 
-<h2>
-<a id="goals-and-deliverables" class="anchor" href="#goals-and-deliverables" aria-hidden="true"><span class="octicon octicon-link"></span></a>GOALS AND DELIVERABLES</h2>
+      <!-- /END THE FEATURETTES -->
 
-<ul>
-<li>Develop a “compiler” which can translate a Python code in parallel</li>
-<li>Compare the speedup curve between our auto-generated code and sophisticated hand crafted code in several applications</li>
-<li>We hope to develop some sophisticated parallel options for users to specify (e.g. dynamic scheduling)</li>
-<li>We hope to compare the speedup curve between our our auto-generated code and c openmp code in several applications</li>
-</ul>
 
-<h2>
-<a id="platform-choice" class="anchor" href="#platform-choice" aria-hidden="true"><span class="octicon octicon-link"></span></a>PLATFORM CHOICE</h2>
-
-<p>Python, because it is a widely used programming language which does not provide an easy way to implement parallel functions.</p>
-<p>We expect the module could help to ease programming as well as optimize program performance. </p>
-
-<h2>
-<a id="schedule" class="anchor" href="#schedule" aria-hidden="true"><span class="octicon octicon-link"></span></a>SCHEDULE</h2>
-
-<ul>
-<li>Thu April 3th to 10th
-
-<ul>
-<li>Finish “compiler”. Be able to transform annotated code into parallel functions. </li>
-<li>In this phase, we support “for” loop annotation only.</li>
-</ul>
-</li>
-<li>Thu April 11th to 16th (Checkpoint)
-
-<ul>
-<li>Finish static scheduler. Test on several workload.</li>
-</ul>
-</li>
-<li>Thu April 17th to 24th
-
-<ul>
-<li>Refine code.</li>
-<li>Finalize list of supported annotation.</li>
-<li>Support all annotations in our design.</li>
-</ul>
-</li>
-<li>Thu April 25th to 30th
-
-<ul>
-<li>Bug fixing.</li>
-<li>Try to implement dynamical scheduler.</li>
-</ul>
-</li>
-<li>Fri May 1th to 8th
-
-<ul>
-<li>Continue bug fixing.</li>
-<li>Refine compiler to check any logic confliction that may block parallel and warn users.</li>
-<li>Test on more program. Finish document.</li>
-<li>Project pages are made available to judges for finalist selection.</li>
-</ul>
-</li>
-</ul>
-
-      <footer class="site-footer">
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>&copy; 2014 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
       </footer>
 
-    </section>
+    </div><!-- /.container -->
 
-  
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="../../assets/js/vendor/holder.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>
-
