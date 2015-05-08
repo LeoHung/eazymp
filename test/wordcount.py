@@ -5,32 +5,47 @@ import re
 
 def word_count(dir_path):
    word_count_result = {}
-   for lists in os.listdir(dir_path): 
-      path = os.path.join(dir_path, lists) 
+   for lists in os.listdir(dir_path):
+      local_word_count = {}
+      path = os.path.join(dir_path, lists)
       if os.path.isfile(path):
          file = open(path, "r")
          for line in file.xreadlines():
             for word in line.split(" "):
-               if word in word_count_result:
-                  word_count_result[word] += 1
+               if word in local_word_count:
+                  local_word_count[word] += 1
                else:
-                  word_count_result[word] = 1
+                  local_word_count[word] = 1
          file.close()
+
+      for k, v in local_word_count.items():
+         if k not in word_count_result:
+            word_count_result[k] = v
+         else:
+            word_count_result[k] += v
+
    return word_count_result
 
 def word_count_mp(dir_path):
    word_count_result = {} #pragma shared
    for lists in os.listdir(dir_path): #pragma omp parallel for
-      path = os.path.join(dir_path, lists) 
+      path = os.path.join(dir_path, lists)
       if os.path.isfile(path):
          file = open(path, "r")
          for line in file.xreadlines():
             for word in line.split(" "):
-               if word in word_count_result:
-                  word_count_result[word] += 1
+               if word in local_word_count:
+                  local_word_count[word] += 1
                else:
-                  word_count_result[word] = 1
+                  local_word_count[word] = 1
          file.close()
+
+      for k, v in local_word_count.items():
+         if k not in word_count_result:
+            word_count_result[k] = v
+         else:
+            word_count_result[k] += v
+
    return word_count_result
 
 if __name__ == "__main__":
