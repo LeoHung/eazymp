@@ -48,10 +48,10 @@ def main(argv):
     num_process = int(argv[2])
 
     # original version
-    # start = datetime.now()
-    # resultA = top1(dir_path)
-    # end = datetime.now()
-    # slow_time = (end - start).total_seconds()
+    start = datetime.now()
+    resultA = top1(dir_path)
+    end = datetime.now()
+    slow_time = (end - start).total_seconds()
 
     # multi-process version
     start = datetime.now()
