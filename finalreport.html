@@ -83,7 +83,7 @@
             <div class="col-md-7">
               <h3>Add Syntax</h3>
               <p class="lead">
-                LazyMP's syntax style is inspired by OpenMP: user just needs to add comments on the block to be parallelized. (1) Add "#pragma omp parallel for" nearby the for-loop to run the loop in parallel, and (2) add "#pragma shared" to indicate which variable is shared among processes.
+                LazyMP's syntax style is inspired by OpenMP: user just needs to add annotations on the block to be parallelized. (1) Add "#pragma omp parallel for" nearby the for-loop to run the loop in parallel, and (2) add "#pragma shared" to indicate which variable is shared among processes.
               </p>
 
               <h3>LazyMP It!</h3>
@@ -104,7 +104,7 @@
           <div class="row">
             <div class="col-md-12">
               <p class="lead">
-                Openmp uses multi-thread for parallelism. However, LazyMP is based on multi-process. Why do we use process based parallelism?
+                Openmp uses multi-thread for parallelism. However, LazyMP is based on multi-process. Why do we choose process based parallelism?
               </p>
               <p class="lead">
                 There are some other possible options:
@@ -117,7 +117,7 @@
               </p>
             </p>
             <p class="lead">
-              So <b>process based solution is a reasonable choice.</b> According to our experiment, Python process can parallel the program in multiple-core host. It meets our need.
+              So <b>process based solution is a reasonable choice.</b> According to our experiment, Python processes can parallel the program in multiple-core host. It meets our need.
             </p>
             <p class="lead">
               However, there are 2 problems for using process based approach.
@@ -129,7 +129,7 @@
               2. Processes share nothing. So it would be hard to share data between parallel instances. For example, reading data in the parallel part requires data to be dispatched to the processes. Writing data in the parallel part will need a collecting phase, so that the following sequential part can see changes.
             </p>
             <p class="lead">
-              Despite the overheads and limitations caused by process based method, it makes true parallelism in Python possible. The performance of the program increases with multiple process execution.
+              Despite the overheads and limitations, process based methods makes true parallelism in Python possible. The performance of the program increases with multiple process execution.
               LazyMP hides multiprocess detail. And it also tries to reduce the overheads.
             </p>
             </div>
@@ -154,7 +154,7 @@
               <h3>#pragma omp parallel for</h3>
 
               <p class="lead">
-                When LazyMP translator detects "#pragema omp parallel for", it generate a core function to wrap the code inside the for-loop. Then, it attach "ProcessPool({num_proecess}).map({iterator})" below the core function.
+                When LazyMP translator detects "#pragema omp parallel for", it generates a core function to wrap the code inside the for-loop. Then, it attaches "ProcessPool({num_proecess}).map({iterator})" below the core function.
               </p>
 
               <p class="lead">
@@ -211,7 +211,7 @@
                 Like OpenMP uses "atomic{}" closure to limit only one thread can access critical section, LazyMP provides Atomic context to let only one process can access the code in the specific block.
               </p>
               <p class="lead">
-                User needs to import Atomic class from lazymp library. Atomic is context class but do nothing. It is just a anchor point for LazyMP to detect. After adding Atomic, user can still run their code with python, and Atomic does not have any affect.
+                User needs to import Atomic class from lazymp library. Atomic is context class but do nothing. It is just a anchor point for LazyMP to detect.
               </p>
               <p class="lead">
                 When LazyMP detects Atomic class, it will use "multiprocess.Manager" to provide a lock. Only the process with the lock can access the critical section.
@@ -271,7 +271,7 @@
               <center><img src="image/chart/grep1.png" width ="400px" align="middle"></img></center>
               <p></p>
               <p class="lead">
-                A typical use case of processing a big file is grep. We write a test script that scan a large file for any lines that contain the input word.
+                A typical use case of processing a big file is grep. We write a test script that scans large file for any lines that contain the input word.
               </p>
               <p class="lead">
                 Naive version of this script will read each line in the file and do a search in these lines. In order to use LazyMP, the script is modified to strips the whole file into small block areas before scan. Then it checks each block in a for loop. The loop itself will not cause computing overhead. But it enables adding LazyMP annotation. So LazyMP will create process for each block area and scan the lines in these block in parallel.
@@ -280,7 +280,7 @@
                 We used a 2GB text file for testing the script. The speedup is shown above. As we increase the process number, the speedup could be up to 5x in a 6 core server.
               </p>
               <p class="lead">
-                Of cause, in this case, the performance of the script is also affected by the size of block. Big size blocks reduce parallelism, small size blocks increasing management overhead. The result we show in this report uses an optimized block size according to our experiment.
+                Of cause, in this case, the performance of the script is also affected by the size of block. Big size blocks reduce parallelism, small size blocks increase management overhead. The result we show in this report uses an optimized block size according to our experiment.
               </p>
             </div>
 
