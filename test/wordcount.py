@@ -2,6 +2,7 @@ from sys import argv
 from datetime import datetime
 import os
 import re
+import sys
 
 def word_count(dir_path):
    word_count_result = {}
@@ -10,12 +11,14 @@ def word_count(dir_path):
       if os.path.isfile(path):
          file = open(path, "r")
          for line in file.xreadlines():
-            for word in line.split(" "):
+            for word in line.split():
                if word in word_count_result:
                   word_count_result[word] += 1
                else:
                   word_count_result[word] = 1
          file.close()
+   for word in word_count_result:
+      print word, word_count_result[word]
    return word_count_result
 
 def word_count_mp(dir_path):
@@ -25,12 +28,14 @@ def word_count_mp(dir_path):
       if os.path.isfile(path):
          file = open(path, "r")
          for line in file.xreadlines():
-            for word in line.split(" "):
+            for word in line.split():
                if word in word_count_result:
                   word_count_result[word] += 1
                else:
                   word_count_result[word] = 1
          file.close()
+   for word in word_count_result:
+      print word, word_count_result[word]
    return word_count_result
 
 if __name__ == "__main__":
@@ -57,6 +62,6 @@ if __name__ == "__main__":
          print "ERROR: results do not match!"
          exit(0)
 
-   print "slow runtime: %s, result count %d" % (str(slow_time), len(resultA))
-   print "fast runtime: %s, result count %d" % (str(fast_time), len(resultB))
-   print "speed up: %f" % (slow_time / fast_time)
+   sys.stderr.write("slow runtime: %s, result count %d\n" % (str(slow_time), len(resultA)))
+   sys.stderr.write("slow runtime: %s, result count %d\n" % (str(slow_time), len(resultA)))
+   sys.stderr.write("speed up: %f\n" % (slow_time / fast_time))
