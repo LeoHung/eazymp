@@ -2,14 +2,22 @@ import re
 
 
 class SharedVariables:
+    SHARED_DICT = 1
+    SHARED_LIST = 2
+    SHARED_NUMBER = 3
+    SHARED_DICT_REDUCE = 4
+
     def __init__(self):
         self.shared = {}
 
-    def register(self, variable):
-        self.shared[variable] = variable
+    def register(self, variable, variable_type):
+        self.shared[variable] = (variable, variable_type)
+
+    # def dump(self):
+    #     return self.shared.keys()
 
     def dump(self):
-        return self.shared.keys()
+        return self.shared.values()
 
     def clean(self):
         self.shared = {}
@@ -165,8 +173,16 @@ class Template:
 
 class Annotation:
     PREFIX = "#pragma"
-    SHARED_VARIABLES = "#pragma shared"
-    PARALLEL_FOR = "#pragma omp parallel for"
+
+    SHARED_VARIABLES = "#pragma[ ]+shared"
+
+    SHARED_DICT_REDUCE = "#pragma[ ]+shared[ ]+dict[ ]+reduce"
+
+    SHARED_DICT = "#pragma[ ]+shared[ ]+dict"
+    SHARED_LIST = "#pragma[ ]+shared[ ]+list"
+    SHARED_NUMBER = "#pragma[ ]+shared[ ]+number"
+
+    PARALLEL_FOR = "#pragma[ ]+omp[ ]+parallel[ ]+for"
 
 
 class STATE:
@@ -176,26 +192,42 @@ class STATE:
 
 class PragmaTranslator:
     parallel_prog = re.compile(Annotation.PARALLEL_FOR)
-    shared_variables_prog = re.compile(Annotation.SHARED_VARIABLES)
+    shared_dict_prog = re.compile(Annotation.SHARED_DICT)
+    shared_list_prog = re.compile(Annotation.SHARED_LIST)
+    shared_number_prog = re.compile(Annotation.SHARED_NUMBER)
+    shared_dict_reduce_prog = re.compile(Annotation.SHARED_DICT_REDUCE)
+
     PARALLEL_FOR = 1
     SHARED_VARIABLES = 2
-    ELSE = 3
+    SHARED_DICT = 3
+    SHARED_LIST = 4
+    SHARED_DICT_REDUCE = 5
+    ELSE = 6
 
     @staticmethod
     def parse(pragma_tokens):
         command = " ".join(pragma_tokens)
-        tmp = PragmaTranslator.parallel_prog.match(command)
-        if tmp is not None:
-            return PragmaTranslator.PARALLEL_FOR
 
-        tmp = PragmaTranslator.shared_variables_prog.match(command)
-        if tmp is not None:
-            return PragmaTranslator.SHARED_VARIABLES
+        reg_type = [
+            (PragmaTranslator.shared_dict_reduce_prog, PragmaTranslator.SHARED_DICT_REDUCE),
+            (PragmaTranslator.parallel_prog, PragmaTranslator.PARALLEL_FOR),
+            (PragmaTranslator.shared_dict_prog, PragmaTranslator.SHARED_DICT),
+            (PragmaTranslator.shared_list_prog, PragmaTranslator.SHARED_LIST)
+        ]
+
+        for reg_prog, return_type in reg_type:
+            tmp = reg_prog.match(command)
+            # if  "#pragma" in command:
+            #     print command
+            #     print tmp
+            if tmp is not None:
+                return return_type
 
         return PragmaTranslator.ELSE
 
 
 class Translator:
+
     def __init__(self, inputfilename, outputfilename, p=0):
         self.parser = Parser(inputfilename)
         self.writer = Writer(outputfilename)
@@ -240,19 +272,21 @@ class Translator:
                 )
             )
 
-            for registered_variable in self.shared_variables.dump():
-                self.writer.write(
-                    Template.define_variable(
-                        left = "__shared__['%s']" % registered_variable,
-                        right = "copy.deepcopy(%s)" % registered_variable,
-                        indention=block_struct['indention']
+            for registered_variable, variable_type in self.shared_variables.dump():
+                if variable_type == SharedVariables.SHARED_DICT_REDUCE:
+                    self.writer.write(
+                        Template.define_variable(
+                            left = "__shared__['%s']" % registered_variable,
+                            right = "copy.deepcopy(%s)" % registered_variable,
+                            indention=block_struct['indention']
+                        )
                     )
-                )
 
             # insert block, replace register variable with __shared['%s']
             block_text = "\n".join(block)
-            for registered_variable in self.shared_variables.dump():
-                block_text = block_text.replace(registered_variable, "__shared__['%s']" % registered_variable)
+            for registered_variable, variable_type in self.shared_variables.dump():
+                if variable_type == SharedVariables.SHARED_DICT_REDUCE:
+                    block_text = block_text.replace(registered_variable, "__shared__['%s']" % registered_variable)
             self.writer.write(block_text)
 
             # insert footer
@@ -282,8 +316,9 @@ class Translator:
             )
             # insert Merge function
             tmp_list =[ ]
-            for registered_variable in self.shared_variables.dump():
-                tmp_list.append("'%s': %s" % (registered_variable, registered_variable) )
+            for registered_variable, variable_type in self.shared_variables.dump():
+                if variable_type == SharedVariables.SHARED_DICT_REDUCE:
+                    tmp_list.append("'%s': %s" % (registered_variable, registered_variable) )
             registered_variable_dict_str = "{ %s }" %(", ".join(tmp_list))
 
             self.writer.write(
@@ -294,7 +329,7 @@ class Translator:
                 )
             )
 
-    def process_shared_variables(self, line, struct):
+    def process_variables(self, line, struct, variable_type):
         # need to check token struct first
         assert re.search("[^=]+=[^ ]+", line) ==None, "'%s' is not a delaration of variable."
 
@@ -302,7 +337,29 @@ class Translator:
         variable = struct['tokens'][0]
 
         # register
-        self.shared_variables.register(variable)
+        self.shared_variables.register(variable, variable_type)
+
+
+    def process_shared_dict_reduce(self, line, struct):
+        self.process_variables(line, struct, SharedVariables.SHARED_DICT_REDUCE)
+
+        # # need to check token struct first
+        # assert re.search("[^=]+=[^ ]+", line) ==None, "'%s' is not a delaration of variable."
+
+        # # parse variable name
+        # variable = struct['tokens'][0]
+
+        # # register
+        # self.shared_variables.register(variable, SHARED_VARIABLES.SHARED_DICT_REDUCE)
+
+    def process_shared_dict(self, line, struct):
+        self.process_variables(line, struct, SharedVariables.SHARED_DICT)
+
+    def process_shared_list(self, line, struct):
+        self.process_variables(line, struct, SharedVariables.SHARED_LIST)
+
+    def process_shared_number(self, line, struct):
+        self.process_variables(line, struct, SharedVariables.SHARED_NUMBER)
 
     def header(self):
         self.writer.write(
@@ -331,8 +388,17 @@ class Translator:
                     pragma_type = PragmaTranslator.parse(struct.get('pragma_tokens'))
                     if pragma_type == PragmaTranslator.PARALLEL_FOR:
                         self.process_parallel_for(line, struct)
-                    elif pragma_type == PragmaTranslator.SHARED_VARIABLES:
-                        self.process_shared_variables(line, struct)
+                    elif pragma_type == PragmaTranslator.SHARED_DICT_REDUCE:
+                        self.process_shared_dict_reduce(line, struct)
+                        self.writer.write(line)
+                    elif pragma_type == PragmaTranslator.SHARED_DICT:
+                        self.process_shared_dict(line, struct)
+                        self.writer.write(line)
+                    elif pragma_type == PragmaTranslator.SHARED_LIST:
+                        self.process_shared_list(line, struct)
+                        self.writer.write(line)
+                    elif pragma_type == PragmaTranslator.SHARED_NUMBER:
+                        self.process_shared_number(line, struct)
                         self.writer.write(line)
                     else:
                         self.writer.write(line)
@@ -374,8 +440,8 @@ def run():
     else:
         rest_options = ""
 
-    os.system("python " + tmp_outputfilename + " " + rest_options)
-    os.remove(tmp_outputfilename)
+    # os.system("python " + tmp_outputfilename + " " + rest_options)
+    # os.remove(tmp_outputfilename)
 
 if __name__ == "__main__":
     run()
