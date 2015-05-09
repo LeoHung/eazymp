@@ -11,7 +11,7 @@ def word_count(dir_path):
          file = open(path, "r")
          for line in file.xreadlines():
             for word in line.split(" "):
-               if word in local_word_count:
+               if word in word_count_result:
                   word_count_result[word] += 1
                else:
                   word_count_result[word] = 1
@@ -27,7 +27,7 @@ def word_count_mp(dir_path):
          file = open(path, "r")
          for line in file.xreadlines():
             for word in line.split(" "):
-               if word in local_word_count:
+               if word in word_count_result:
                   word_count_result[word] += 1
                else:
                   word_count_result[word] = 1
