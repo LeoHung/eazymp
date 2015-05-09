@@ -50,7 +50,6 @@
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
       <div class="carousel-inner" role="listbox">
         <div class="item active">
-          <img class="first-slide" src="image/rocket.jpg" alt="First slide">
           <div class="container">
             <div class="carousel-caption">
               <h1>Final Report</h1>
@@ -63,7 +62,7 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-10">
           <div class="row">
 
             <div class="col-md-12">
@@ -92,8 +91,8 @@
               </p>
             </div>
             <div class="col-md-5">
-              <img src="image/annotation.png" align="right" width="350px"></img>
-              <img src="image/lazy.png" align="right" width="350px"></img>
+              <img src="image/annotation.png" align="right" max-width="100%" width="100%"></img>
+              <img src="image/lazy.png" align="right" width="100%"></img>
             </div>
           </div>
 
@@ -163,7 +162,7 @@
             </div>
             <div class="col-md-5">
               <h3> &nbsp;</h3>
-              <img src="image/parallel_for.png" align="right" width="350px">
+              <img src="image/parallel_for.png" align="right" width="100%">
             </div>
 
 
@@ -181,7 +180,7 @@
             </div>
             <div class="col-md-5">
               <h3> &nbsp;</h3>
-              <img src="image/shared_variable.png" align="right" width="350px">
+              <img src="image/shared_variable.png" align="right" width="100%">
             </div>
 
 
@@ -202,7 +201,7 @@
             </div>
             <div class="col-md-5">
               <h3> &nbsp;</h3>
-              <img src="image/shared_reduce_variable.png" align="right" width="350px">
+              <img src="image/shared_reduce_variable.png" align="right" width="100%">
             </div>
 
             <div class="col-md-7">
@@ -219,7 +218,7 @@
             </div>
             <div class="col-md-5">
               <h3> &nbsp;</h3>
-              <img src="image/atomic.png" align="right" width="350px">
+              <img src="image/atomic.png" align="right" width="100%">
             </div>
 
           </div>
@@ -254,17 +253,17 @@
             </div>
             <div class="col-md-5">
               <h3> &nbsp;</h3>
-              <img src="image/chart/busyloop.png" width ="350px" align="middle"></img>
+              <img src="image/chart/busyloop.png" width ="100%" align="middle"></img>
 
               <h3> &nbsp;</h3>
 
-              <img src="image/chart/mandelbrot.png" width ="350px" align="middle"></img>
+              <img src="image/chart/mandelbrot.png" width ="100%" align="middle"></img>
             </div>
 
 
             <div class="col-md-12">
               <h3>Grep a single big file</h3>
-              <center><img src="image/chart/grep1.png" width ="400px" align="middle"></img></center>
+              <center><img src="image/chart/grep1.png" width ="500px" align="middle"></img></center>
               <p></p>
               <p class="lead">
                 A typical use case of processing a big file is grep. We write a test script that scans large file for any lines that contain the input word.
@@ -282,7 +281,7 @@
 
             <div class="col-md-12">
               <h3>Grep various files</h3>
-              <center><img src="image/chart/grep2.png" width ="400px" align="middle"></img></center>
+              <center><img src="image/chart/grep2.png" width ="500px" align="middle"></img></center>
               <p></p>
               <p class="lead">
                 Another typical use case is processing a large amount of files. For example, scan in the log folder. The scan script can potentially check every log files in parallel. But programmer usually do it in a loop for quick development. Now they just add LazyMP annotation after the for loop.
@@ -331,7 +330,7 @@
           </div>
 
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <div id="mynav" style="top: 30px">
             <nav class="nav nav-pills nav-stacked hidden-xs hidden-sm">
               <li role="presentation"><a href="#summary">Summary</a></li>

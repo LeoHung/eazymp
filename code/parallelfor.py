@@ -10,3 +10,7 @@ def core(i):
 
 from pathos.multiprocessing import ProcessingPool
 ProcessingPool(num_process).map(core, range(1000))
+
+
+
+`
