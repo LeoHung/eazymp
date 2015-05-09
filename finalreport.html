@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>LazyMP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen"> -->
+<!--     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'> -->
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <!-- <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen"> -->
+
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <link href="carousel.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="navbar-wrapper">
+      <div class="container">
+
+        <nav class="navbar navbar-inverse navbar-static-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">LazyMP</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="proposal.html">Proposal</a></li>
+                <li><a href="checkpoint.html">Check Point</a></li>
+                <li class="active"><a href="finalreport.html">Final Report</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+      </div>
+    </div>
+
+
+    <!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img class="first-slide" src="image/rocket.jpg" alt="First slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Final Report</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.carousel -->
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="row">
+
+            <div class="col-md-12">
+              <h2 class="featurette-heading"><a name="summary"></a>Summary</h2>
+              <p class="lead">
+                We developed Lazymp, a python-to-python translator, which supports OpenMP [2] style annotation to make sequential code run in parallel. User can utilize mutiple cores with least effort to run code faster!
+              </p>
+              <p class="lead">
+                According to our experiment, we show that LazyMP can provide N/2x ~ Nx speedup comparing to sequential code.
+              </p>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-md-12"><h2 class="featurette-heading"><a name="howtouse"></a>How to Use</h2></div>
+            <div class="col-md-7">
+              <h3>Add Syntax</h3>
+              <p class="lead">
+                LazyMP's syntax style is inspired by OpenMP: user just needs to add comments on the block to be parallelized. (1) Add "#pragma omp parallel for" nearby the for-loop to run the loop in parallel, and (2) add "#pragma shared" to indicate which variable is shared among processes.
+              </p>
+
+              <h3>LazyMP It!</h3>
+              <p class="lead">
+                Enter "lazymp code.py", and then Lazymp will translate your code into parallized code and run it in parallel.
+              </p>
+            </div>
+            <div class="col-md-5">
+              <img src="image/annotation.png" align="right" width="350px"></img>
+              <img src="image/lazy.png" align="right" width="350px"></img>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12"><h2 class="featurette-heading"><a name="syntax"></a><a name="processparallelism"></a>Process Parallelism</h2></div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <p class="lead">
+                Openmp uses multi-thread for parallelism. However, LazyMP is based on multi-process. Why do we use process based parallelism?
+              </p>
+              <p class="lead">
+                There are some other possible options:
+              </p>
+              <p class="lead">
+                <b>Thread parallelism</b> Native Python thread requires GIL before running. So only a single thread can be active at a time in the Python interpreter.
+              </p>
+              <p class="lead">
+                <b>Cython extension</b> Cython [3] helps to add C extensions in Python program. So programmers can potentially use C thread lib for parallelism. Although it’s a feasible way, it requires programmers learn Cython, and C language. And the program tends to be complicated when Cython is used. What is worse, programmer may need to refactor all existing code if he want to add parallelism.
+              </p>
+            </p>
+            <p class="lead">
+              So <b>process based solution is a reasonable choice.</b> According to our experiment, Python process can parallel the program in multiple-core host. It meets our need.
+            </p>
+            <p class="lead">
+              However, there are 2 problems for using process based approach.
+            </p>
+            <p class="lead">
+              1. Process is heavier than thread. So overhead of using process is higher.
+            </p>
+            <p class="lead">
+              2. Processes share nothing. So it would be hard to share data between parallel instances. For example, reading data in the parallel part requires data to be dispatched to the processes. Writing data in the parallel part will need a collecting phase, so that the following sequential part can see changes.
+            </p>
+            <p class="lead">
+              Despite the overheads and limitations caused by process based method, it makes true parallelism in Python possible. The performance of the program increases with multiple process execution.
+              LazyMP hides multiprocess detail. And it also tries to reduce the overheads.
+            </p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <h2 class="featurette-heading"><a name="translator"></a>Translator & Syntax</h2>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-7">
+              <p class="lead">
+                We built a translator to detect the "#pragma omp parallel for" and "#pragma shared", replace the original block with defined parallized patterns.
+              </p>
+            </div>
+            <div class="col-md-5">
+            </div>
+
+            <div class="col-md-7">
+              <h3>#pragma omp parallel for</h3>
+
+              <p class="lead">
+                When LazyMP translator detects "#pragema omp parallel for", it generate a core function to wrap the code inside the for-loop. Then, it attach "ProcessPool({num_proecess}).map({iterator})" below the core function.
+              </p>
+
+              <p class="lead">
+                ProcessPool({num_proecess}).map({iterator}) will launch a process pool, collect the values in iterator, and dispatch a job (a core function and a value from iterator) to run the block in parallel.
+              </p>
+            </div>
+            <div class="col-md-5">
+              <h3> &nbsp;</h3>
+              <img src="image/parallel_for.png" align="right" width="350px">
+            </div>
+
+
+            <div class="col-md-7">
+              <h3>#pragma shared</h3>
+              <p class="lead">
+                When "#pragma shared" is detected, LazyMP translator will use "multiprocess.Manager" to generate a shared proxy variable for the original variable, and redirect all the variable operations to the proxy variable.
+              </p>
+              <p class="lead">
+                "multiprocess.Manager" launches a process for shared variable operations and return a proxies for worker processes to accesss the shared variable.
+              </p>
+              <p class="lead">
+                After all operations finish, LazyMP translator adds a code to copy the data back from the proxy variable to the original variable.
+              </p>
+            </div>
+            <div class="col-md-5">
+              <h3> &nbsp;</h3>
+              <img src="image/shared_variable.png" align="right" width="350px">
+            </div>
+
+
+            <div class="col-md-7">
+              <h3>#pragma shared reduce</h3>
+              <p class="lead">
+                LazyMP provides another syntax to indicate shared variables: "#pragma shared reduce".
+              </p>
+              <p class="lead">
+                Instead of using "multiprocess.Manager" to provide shared variable process, "#pragma shared reduce" lets each process access it's local variable first, and then reduces them after for-loop finishes.
+              </p>
+              <p class="lead">
+                LazyMP translator first adds __shared__ dictionary into core function. The operations related to the shared variable will be redirect to the __shared__ variable, and the core function will return __shared__ variable finally. LazyMP will add a block of code to reduce __shared__ variables into the original varible.
+              </p>
+              <p class="lead">
+                This approach can reduce synchronization overhead, because the processes does not truly shared variables.
+              </p>
+            </div>
+            <div class="col-md-5">
+              <h3> &nbsp;</h3>
+              <img src="image/shared_reduce_variable.png" align="right" width="350px">
+            </div>
+
+            <div class="col-md-7">
+              <h3>with Atomic</h3>
+              <p class="lead">
+                Like OpenMP uses "atomic{}" closure to limit only one thread can access critical section, LazyMP provides Atomic context to let only one process can access the code in the specific block.
+              </p>
+              <p class="lead">
+                User needs to import Atomic class from lazymp library. Atomic is context class but do nothing. It is just a anchor point for LazyMP to detect. After adding Atomic, user can still run their code with python, and Atomic does not have any affect.
+              </p>
+              <p class="lead">
+                When LazyMP detects Atomic class, it will use "multiprocess.Manager" to provide a lock. Only the process with the lock can access the critical section.
+              </p>
+            </div>
+            <div class="col-md-5">
+              <h3> &nbsp;</h3>
+              <img src="image/atomic.png" align="right" width="350px">
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <h2 class="featurette-heading"><a name="evaluation"></a>Evaluation</h2>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <h3>Environment</h3>
+              <p class="lead">
+                We launched experiments in GHC machine 33, which has 6 cores (12-virtual cores due to Hyper-threading).
+              </p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-7">
+              <h3>CPU intensive tasks</h3>
+
+                <p class="lead">
+                We first test LazyMP with two CPU intensive tasks: busyloop and mandelbrot [1]. These type of tasks consume CPU computation rather than memory fetching. We can examine LazyMP performance without worring other factors(e.g., memory bandwidth, disk I/O, network I/O) with these tasks.
+              </p>
+
+              <p class="lead">
+                BusyLoop runs i++ 500 times inside a for-loop. i is a local variable, so does not have any synchronization requirment.
+              </p>
+              <p class="lead">
+                Mandelbrot is invested by Pierre Fatou and Gaston Julia. It also requires much CPU comutation but less memory communication. In our test, we compute 1000 * 1000 mandelbrot graph.
+              </p>
+              <p class="lead">
+                According the experiment result, LazyMP can provide 5x~6x speedup in both cases.
+              </p>
+            </div>
+            <div class="col-md-5">
+              <h3> &nbsp;</h3>
+              <img src="image/chart/busyloop.png" width ="350px" align="middle"></img>
+
+              <h3> &nbsp;</h3>
+
+              <img src="image/chart/mandelbrot.png" width ="350px" align="middle"></img>
+            </div>
+
+
+            <div class="col-md-12">
+              <h3>Grep a single big file</h3>
+              <center><img src="image/chart/grep1.png" width ="400px" align="middle"></img></center>
+              <p></p>
+              <p class="lead">
+                A typical use case of processing a big file is grep. We write a test script that scan a large file for any lines that contain the input word.
+              </p>
+              <p class="lead">
+                Naive version of this script will read each line in the file and do a search in these lines. In order to use LazyMP, the script is modified to strips the whole file into small block areas before scan. Then it checks each block in a for loop. The loop itself will not cause computing overhead. But it enables adding LazyMP annotation. So LazyMP will create process for each block area and scan the lines in these block in parallel.
+              </p>
+              <p class="lead">
+                We used a 2GB text file for testing the script. The speedup is shown above. As we increase the process number, the speedup could be up to 5x in a 6 core server.
+              </p>
+              <p class="lead">
+                Of cause, in this case, the performance of the script is also affected by the size of block. Big size blocks reduce parallelism, small size blocks increasing management overhead. The result we show in this report uses an optimized block size according to our experiment.
+              </p>
+            </div>
+
+            <div class="col-md-12">
+              <h3>Grep various files</h3>
+              <center><img src="image/chart/grep2.png" width ="400px" align="middle"></img></center>
+              <p></p>
+              <p class="lead">
+                Another typical use case is processing a large amount of files. For example, scan in the log folder. The scan script can potentially check every log files in parallel. But programmer usually do it in a loop for quick development. Now they just add LazyMP annotation after the for loop.
+              </p>
+              <p class="lead">
+                In this example, we do grep on more than 600 files, each with size around 5MB. The script checks all files (or the files in subdirectories) for lines that contain the input word. Each file is processed in a separate process by LazyMP. The result is shown above.
+              </p>
+              <p class="lead">
+                We notice the speedup is even better than the processing single file example. When the script is parallelized according to files, there is no overhead for striping the input.
+              </p>
+              <p class="lead">
+                Besides performance, this test also verifies LazyMP can handle nested loop. As long as the system has resource for new process fork, the nested loop can be handled in parallel as well.
+              </p>
+            </div>
+
+            <div class="col-md-12">
+              <h3>Synchronization Tests</h3>
+              <p></p>
+              <p class="lead">
+                Previous tests don’t need synchronization. However, it’s a common requirement for parallel program. For example, if we want to do word count in multiple files, the count has to be synchronously updated. In LazyMP, there are 2 ways for this task. First option is using atomic method. Second option is using “shared union” annotation on the variables.
+              </p>
+              <p class="lead">
+                We tested these 2 methods using a word count script on 116 small text files. Every process scan a single file.
+              </p>
+              <p class="lead">
+                For using the atomic method in this script, the developer has to specify which block in the code would update the count. Then LazyMP will ensure atomicity by using lock. The result shows that lock causes a lot of overheads and the performance is actually decrease when using LazyMP version.
+              </p>
+              <p class="lead">
+                For using the “shared union” method, the developer needs to add annotation on the word count dict. Then LazyMP will help to aggregate the result. The result shows that when there are too many items in the dict, script performance will decrease.
+              </p>
+              <p class="lead">
+                Although these 2 methods can ensure the correctness, we think developers should not use LazyMP in the programs that have high synchronization requirement.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <h2>Reference</h2>
+            <ul>
+              <li>[1] Mandelbrot. http://en.wikipedia.org/wiki/Mandelbrot_set</li>
+              <li>[2] OpenMP. https://computing.llnl.gov/tutorials/openMP/</li>
+              <li>[3] Cython. http://cython.org/</li>
+            </ul>
+          </div>
+
+        </div>
+        <div class="col-md-3">
+          <div id="mynav" style="top: 30px">
+            <nav class="nav nav-pills nav-stacked">
+              <li role="presentation"><a href="#summary">Summary</a></li>
+              <li role="presentation"><a href="#howtouse">How to use</a></li>
+              <li role="presentation"><a href="#processparallelism">Process Parallelism</a>
+              <li role="presentation"><a href="#translator"> Translator & Syntax</a></li>
+              <li role="presentation"><a href="#evaluation">Evaluation</a></li>
+              <li role="presentation"><a href="#reference">Reference</a></li>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script>
+      $('#mynav').affix({
+        offset: {
+          top: 350,
+          bottom: function () {
+            return (this.bottom = $('.footer').outerHeight(true))
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
+
