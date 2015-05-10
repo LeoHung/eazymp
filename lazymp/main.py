@@ -152,9 +152,6 @@ class Template:
     def return_variable(variable, indention=0):
         return "%sreturn %s" % (" " * indention, variable)
 
-
-
-
     @staticmethod
     def import_module(module, package=None,abbr=None, indention=0):
         indention_str = " " * indention
@@ -227,9 +224,6 @@ class PragmaTranslator:
 
         for reg_prog, return_type in reg_type:
             tmp = reg_prog.match(command)
-            # if  "#pragma" in command:
-            #     print command
-            #     print tmp
             if tmp is not None:
                 return return_type
 
