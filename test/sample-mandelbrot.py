@@ -43,7 +43,7 @@ def mandelbrot(row, col, size_x, size_y):
 
 
 def run_mandelbrot(size_x, size_y):
-    data = {}  #pragma shared
+    data = {}  #pragma shared dict
 
     for row in xrange(size_x):  #pragma omp parallel for
         for col in xrange(size_y):
