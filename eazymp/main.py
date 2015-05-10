@@ -288,14 +288,14 @@ class Translator:
             # import copy_dict, copy_list
             self.writer.write(
                 Template.import_module(
-                    package="lazymp.helpers",
+                    package="eazymp.helpers",
                     module="copy_dict",
                     indention=parallel_struct['indention']
                 )
             )
             self.writer.write(
                 Template.import_module(
-                    package="lazymp.helpers",
+                    package="eazymp.helpers",
                     module="copy_list",
                     indention=parallel_struct['indention']
                 )
@@ -507,13 +507,13 @@ class Translator:
     def header(self):
         self.writer.write(
             Template.import_module(
-                package="lazymp.helpers",
+                package="eazymp.helpers",
                 module="join_dict"
             )
         )
         self.writer.write(
             Template.import_module(
-                package="lazymp.helpers",
+                package="eazymp.helpers",
                 module="join_shared"
             )
         )
