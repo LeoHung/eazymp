@@ -20,17 +20,20 @@ def word_count(dir_path):
    return word_count_result
 
 def word_count_mp(dir_path):
-   word_count_result = {} #pragma shared
+   from lazymp.atomic import Atomic
+
+   word_count_result = {} #pragma shared dict
    for lists in os.listdir(dir_path): #pragma omp parallel for
       path = os.path.join(dir_path, lists)
       if os.path.isfile(path):
          file = open(path, "r")
          for line in file.xreadlines():
             for word in line.split(" "):
-               if word in word_count_result:
-                  word_count_result[word] += 1
-               else:
-                  word_count_result[word] = 1
+               with Atomic():
+                  if word in word_count_result:
+                     word_count_result[word] += 1
+                  else:
+                     word_count_result[word] = 1
          file.close()
 
    return word_count_result
