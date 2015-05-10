@@ -2,6 +2,7 @@ from sys import argv
 from datetime import datetime
 import os
 import re
+import sys
 
 """
    Print the lines in file if pattern appears in the string
@@ -13,8 +14,8 @@ def grep(pattern, file_path, offset, size):
       # if not the very first line in the file, skip the first input string
       file.readline()
    for line in file.xreadlines():
-      #if pattern in line:
-      #   print line
+      if pattern in line:
+         print line
       size -= len(line) + 1
       if(size <= 0):
          break
@@ -66,6 +67,7 @@ if __name__ == "__main__":
    end = datetime.now()
    fast_time = (end - start).total_seconds()
 
-   print "slow runtime: %s" % str(slow_time)
-   print "fast runtime: %s" % str(fast_time)
-   print "speed up: %f" % (slow_time / fast_time)
+   # for debug, output to stderr
+   sys.stderr.write("slow runtime: %s\n" % str(slow_time))
+   sys.stderr.write("fast runtime: %s\n" % str(fast_time))
+   sys.stderr.write("speed up: %f\n" % (slow_time / fast_time))

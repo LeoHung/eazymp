@@ -2,6 +2,7 @@ from sys import argv
 from datetime import datetime
 import os
 import re
+import sys
 
 """
    Print the lines in file if pattern appears in the string
@@ -25,7 +26,7 @@ def traverse_dir_mp(pattern, dir_path):
    for lists in os.listdir(dir_path): #pragma omp parallel for
       path = os.path.join(dir_path, lists) 
       if os.path.isdir(path): 
-         traverse_dir(pattern, path) ## FIXME nested call does not work
+         traverse_dir_mp(pattern, path)
       elif os.path.isfile(path):
          grep(pattern, path)
 
@@ -45,6 +46,6 @@ if __name__ == "__main__":
    end = datetime.now()
    fast_time = (end - start).total_seconds()
 
-   print "slow runtime: %s" % str(slow_time)
-   print "fast runtime: %s" % str(fast_time)
-   print "speed up: %f" % (slow_time / fast_time)
+   sys.stderr.write("slow runtime: %s\n" % str(slow_time))
+   sys.stderr.write("fast runtime: %s\n" % str(fast_time))
+   sys.stderr.write("speed up: %f\n" % (slow_time / fast_time))
