@@ -145,11 +145,18 @@ class Template:
         return "%s%s = %s" %(" " * indention, left, right)
 
     @staticmethod
-    def return_variable(variable, indention=0):
-        return "%sreturn %s" % (" "*indention, variable)
+    def assign_variable(left, right, indention=0):
+        return Template.define_variable(left, right, indention)
 
     @staticmethod
-    def import_moudle(module, package=None,abbr=None, indention=0):
+    def return_variable(variable, indention=0):
+        return "%sreturn %s" % (" " * indention, variable)
+
+
+
+
+    @staticmethod
+    def import_module(module, package=None,abbr=None, indention=0):
         indention_str = " " * indention
         if package is None:
             if abbr is None:
@@ -169,6 +176,7 @@ class Template:
         elif type(variables) is list:
             variables_str = ", ".join(variables)
         return "%s%s(%s)" % (" "* indention, function_name, variables_str)
+
 
 
 class Annotation:
@@ -248,6 +256,98 @@ class Translator:
         else:
             # parse block
             block, block_struct = self.parser.parse_blcok()
+
+            # insert shared Manager (for shared dict, list, number)
+            self.writer.write(
+                Template.import_module(
+                    module="Manager",
+                    package="multiprocessing",
+                    indention=parallel_struct['indention']
+                )
+            )
+
+            self.writer.write(
+                Template.assign_variable(
+                    left="_manager",
+                    right="Manager()",
+                    indention=parallel_struct['indention']
+                )
+            )
+            self.writer.write(
+                Template.assign_variable(
+                    left="_namespace",
+                    right="_manager.Namespace()",
+                    indention=parallel_struct['indention']
+                )
+            )
+            self.writer.write(
+                Template.assign_variable(
+                    left="_lock",
+                    right="_manager.Lock()",
+                    indention=parallel_struct['indention']
+                )
+            )
+
+            # initial proxy, and copy shared dict, list, number
+            # import copy_dict, copy_list
+            self.writer.write(
+                Template.import_module(
+                    package="lazymp.helpers",
+                    module="copy_dict",
+                    indention=parallel_struct['indention']
+                )
+            )
+            self.writer.write(
+                Template.import_module(
+                    package="lazymp.helpers",
+                    module="copy_list",
+                    indention=parallel_struct['indention']
+                )
+            )
+
+            for registered_variable, variable_type in self.shared_variables.dump():
+                if variable_type == SharedVariables.SHARED_DICT:
+                    # initialize proxy for dict, and copy from original dict
+                    self.writer.write(
+                        Template.assign_variable(
+                            left="proxy_" + registered_variable,
+                            right="_manager.dict()",
+                            indention=parallel_struct['indention']
+                        )
+                    )
+                    self.writer.write(
+                        Template.execute_function(
+                            function_name="copy_dict",
+                            variables=[registered_variable, "proxy_" + registered_variable],
+                            indention=parallel_struct['indention']
+                        )
+                    )
+
+                elif variable_type == SharedVariables.SHARED_LIST:
+                    # initialize proxy for list, and copy from original list
+                    self.writer.write(
+                        Template.assign_variable(
+                            left="proxy_" + registered_variable,
+                            right="_manager.list()",
+                            indention=parallel_struct['indention']
+                        )
+                    )
+                    self.writer.write(
+                        Template.execute_function(
+                            function_name="copy_list",
+                            variables=[registered_variable, "proxy_" + registered_variable],
+                            indention=parallel_struct['indention']
+                        )
+                    )
+                elif variable_type == SharedVariables.SHARED_NUMBER:
+                    # initializae proxy for number, and copy from original number
+                    self.writer.write(
+                        Template.assign_variable(
+                            left="_namespace." + registered_variable,
+                            right=return_variable
+                        )
+                    )
+
             # rewrite code
             self.writer.write(
                 Template.def_function(
@@ -256,6 +356,7 @@ class Translator:
                     indention=parallel_struct['indention']
                 )
             )
+
             # insert registered code
             self.writer.write(
                 Template.define_variable(
@@ -266,7 +367,7 @@ class Translator:
             )
             # import copy
             self.writer.write(
-                Template.import_moudle(
+                Template.import_module(
                     module="copy",
                     indention=block_struct['indention']
                 )
@@ -282,11 +383,19 @@ class Translator:
                         )
                     )
 
-            # insert block, replace register variable with __shared['%s']
+            # insert block
+            # replace shared dict reduce with __shared__['%s']
+            # replace shared dict, list with proxy_%s
+            # replace shared number with _namespace.%s
             block_text = "\n".join(block)
             for registered_variable, variable_type in self.shared_variables.dump():
                 if variable_type == SharedVariables.SHARED_DICT_REDUCE:
                     block_text = block_text.replace(registered_variable, "__shared__['%s']" % registered_variable)
+                elif variable_type == SharedVariables.SHARED_DICT or variable_type == SharedVariables.SHARED_LIST:
+                    block_text = block_text.replace(registered_variable, "proxy_%s" % registered_variable)
+                elif variable_type == SharedVariables.SHARED_NUMBER:
+                    block_text = block_text.replace(registered_variable, "_namespace.%s" %registered_variable)
+
             self.writer.write(block_text)
 
             # insert footer
@@ -296,9 +405,9 @@ class Translator:
                     indention=block_struct['indention']
                 )
             )
-            # insert import
+            # insert import pathos.multiprocessing ProcessingPool
             self.writer.write(
-                Template.import_moudle(
+                Template.import_module(
                     package="pathos.multiprocessing",
                     module="ProcessingPool",
                     indention=parallel_struct['indention']
@@ -328,6 +437,37 @@ class Translator:
                     indention=parallel_struct['indention']
                 )
             )
+
+            # copy dict, list, number from proxy
+            for registered_variable, variable_type in self.shared_variables.dump():
+                if variable_type == SharedVariables.SHARED_DICT:
+                    # copy from proxy dict
+                    self.writer.write(
+                        Template.execute_function(
+                            function_name="copy_dict",
+                            variables=["proxy_" + registered_variable, registered_variable],
+                            indention=parallel_struct['indention']
+                        )
+                    )
+
+                elif variable_type == SharedVariables.SHARED_LIST:
+                    # copy from proxy list
+                    self.writer.write(
+                        Template.execute_function(
+                            function_name="copy_new_list",
+                            variables=["proxy_" + registered_variable, registered_variable],
+                            indention=parallel_struct['indention']
+                        )
+                    )
+                elif variable_type == SharedVariables.SHARED_NUMBER:
+                    # copy back from proxy number
+                    self.writer.write(
+                        Template.assign_variable(
+                            left=return_variable,
+                            right="_namespace." + registered_variable
+                        )
+                    )
+
 
     def process_variables(self, line, struct, variable_type):
         # need to check token struct first
@@ -363,13 +503,13 @@ class Translator:
 
     def header(self):
         self.writer.write(
-            Template.import_moudle(
+            Template.import_module(
                 package="lazymp.helpers",
                 module="join_dict"
             )
         )
         self.writer.write(
-            Template.import_moudle(
+            Template.import_module(
                 package="lazymp.helpers",
                 module="join_shared"
             )
