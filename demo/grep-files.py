@@ -29,6 +29,6 @@ if __name__ == "__main__":
    start = datetime.now()
    traverse_dir(word, dir_path)
    end = datetime.now()
-   slow_time = (end - start).total_seconds()
+   time = (end - start).total_seconds()
 
-   sys.stderr.write("runtime: %s\n" % str(slow_time))
+   sys.stderr.write("runtime: %s\n" % str(time))
