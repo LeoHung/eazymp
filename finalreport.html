@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>LazyMP</title>
+    <title>EazyMP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen"> -->
 <!--     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'> -->
@@ -28,7 +28,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">LazyMP</a>
+              <a class="navbar-brand" href="#">EazyMP</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
@@ -52,7 +52,7 @@
         <div class="item active">
           <div class="container">
             <div class="carousel-caption">
-              <h1>Final Report</h1>
+              <h1>EazyMP Final Report</h1>
             </div>
           </div>
         </div>
@@ -68,26 +68,46 @@
             <div class="col-md-12">
               <h2 class="featurette-heading"><a name="summary"></a>Summary</h2>
               <p class="lead">
-                We developed Lazymp, a python-to-python translator, which supports OpenMP [2] style annotation to make sequential code run in parallel. User can utilize mutiple cores with least effort to run code faster!
+                We developed EazyMP, a python-to-python translator supporting OpenMP [2] style annotation to make sequential code run in parallel. User can utilize mutiple cores with least effort to run code faster!
               </p>
               <p class="lead">
-                According to our experiment, we show that LazyMP can provide N/2x ~ Nx speedup comparing to sequential code.
+                EazyMP is tested on GHC server (with 6 cores) and latedays server (with 12 cores) with several test scripts "BusyLoop", "Mandelbrot" and file grep.
+              </p>
+              <p class="lead">
+                According to the experiments, we show that EazyMP can provide up to N/2x ~ Nx (N is the number of cores) speedup comparing to sequential code.
               </p>
             </div>
           </div>
 
+          <div class="row">
+            <div class="col-md-12">
+              <h2 class="featurette-heading"><a name="background"></a>Background</h2>
+              <p class="lead">
+                One of the promising features in OpenMP is the easiness to program. All programers need to do is adding annotations to tag the block to parallel. Due to Global Interpreter Lock mechanism in Python, to our best knowledge, there is no easy way which enables standard Python to integrate with OpenMP. The programmers need to learn Cython language or new parallel Python frameworks, which takes much extra effort.
+              </p>
+              <p class="lead">
+                EazyMP is a python-to-python compiler which transforms original python code to a parallelized version: "for" loop code to multi-process code (like Pool().map()).               
+              </p>
+              <p class="lead">
+                With our “compiler”, the users can optimize the code to its parallelized version easily by just adding annotations on the for loop.
+              </p>
+              <p class="lead">
+                We think cpu intensive programs process multiple data can benefit from EazyMP the most. Like Mandelbort. In other scenario, program can still take advantage of multiple cores but abuse of EazyMP may also generate extra overheads (e.g. scattering variables, gathering return values).
+              </p>
+            </div>
+          </div>
 
           <div class="row">
             <div class="col-md-12"><h2 class="featurette-heading"><a name="howtouse"></a>How to Use</h2></div>
             <div class="col-md-7">
               <h3>Add Syntax</h3>
               <p class="lead">
-                LazyMP's syntax style is inspired by OpenMP: user just needs to add annotations on the block to be parallelized. (1) Add "#pragma omp parallel for" nearby the for-loop to run the loop in parallel, and (2) add "#pragma shared" to indicate which variable is shared among processes.
+                EazyMP's syntax style is inspired by OpenMP: user just needs to add annotations on the block to be parallelized. (1) Add "#pragma omp parallel for" nearby the for-loop to run the loop in parallel, and (2) add "#pragma shared" to indicate which variable is shared among processes.
               </p>
 
-              <h3>LazyMP It!</h3>
+              <h3>EazyMP It!</h3>
               <p class="lead">
-                Enter "lazymp code.py", and then Lazymp will translate your code into parallized code and run it in parallel.
+                Enter "EazyMP code.py", and then EazyMP will translate your code into parallized code and run it in parallel.
               </p>
             </div>
             <div class="col-md-5">
@@ -103,7 +123,7 @@
           <div class="row">
             <div class="col-md-12">
               <p class="lead">
-                Openmp uses multi-thread for parallelism. However, LazyMP is based on multi-process. Why do we choose process based parallelism?
+                Openmp uses multi-thread for parallelism. However, EazyMP is based on multi-process. Why do we choose process based parallelism?
               </p>
               <p class="lead">
                 There are some other possible options:
@@ -129,7 +149,7 @@
             </p>
             <p class="lead">
               Despite the overheads and limitations, process based methods makes true parallelism in Python possible. The performance of the program increases with multiple process execution.
-              LazyMP hides multiprocess detail. And it also tries to reduce the overheads.
+              EazyMP hides multiprocess detail. And it also tries to reduce the overheads.
             </p>
             </div>
           </div>
@@ -153,7 +173,7 @@
               <h3>#pragma omp parallel for</h3>
 
               <p class="lead">
-                When LazyMP translator detects "#pragema omp parallel for", it generates a core function to wrap the code inside the for-loop. Then, it attaches "ProcessPool({num_proecess}).map({iterator})" below the core function.
+                When EazyMP translator detects "#pragema omp parallel for", it generates a core function to wrap the code inside the for-loop. Then, it attaches "ProcessPool({num_proecess}).map({iterator})" below the core function.
               </p>
 
               <p class="lead">
@@ -167,15 +187,15 @@
 
 
             <div class="col-md-7">
-              <h3>#pragma shared</h3>
+              <h3>#pragma shared [TODO make Kayvon understand this!]</h3>
               <p class="lead">
-                When "#pragma shared" is detected, LazyMP translator will use "multiprocess.Manager" to generate a shared proxy variable for the original variable, and redirect all the variable operations to the proxy variable.
+                When "#pragma shared" is detected, EazyMP translator will use "multiprocess.Manager" to generate a shared proxy variable for the original variable, and redirect all the variable operations to the proxy variable.
               </p>
               <p class="lead">
                 "multiprocess.Manager" launches a process for shared variable operations and return a proxies for worker processes to accesss the shared variable.
               </p>
               <p class="lead">
-                After all operations finish, LazyMP translator adds a code to copy the data back from the proxy variable to the original variable.
+                After all operations finish, EazyMP translator adds a code to copy the data back from the proxy variable to the original variable.
               </p>
             </div>
             <div class="col-md-5">
@@ -187,13 +207,13 @@
             <div class="col-md-7">
               <h3>#pragma shared reduce</h3>
               <p class="lead">
-                LazyMP provides another syntax to indicate shared variables: "#pragma shared reduce".
+                EazyMP provides another syntax to indicate shared variables: "#pragma shared reduce".
               </p>
               <p class="lead">
                 Instead of using "multiprocess.Manager" to provide shared variable process, "#pragma shared reduce" lets each process access it's local variable first, and then reduces them after for-loop finishes.
               </p>
               <p class="lead">
-                LazyMP translator first adds __shared__ dictionary into core function. The operations related to the shared variable will be redirect to the __shared__ variable, and the core function will return __shared__ variable finally. LazyMP will add a block of code to reduce __shared__ variables into the original varible.
+                EazyMP translator first adds __shared__ dictionary into core function. The operations related to the shared variable will be redirect to the __shared__ variable, and the core function will return __shared__ variable finally. EazyMP will add a block of code to reduce __shared__ variables into the original varible.
               </p>
               <p class="lead">
                 This approach can reduce synchronization overhead, because the processes does not truly shared variables.
@@ -207,13 +227,13 @@
             <div class="col-md-7">
               <h3>with Atomic</h3>
               <p class="lead">
-                Like OpenMP uses "atomic{}" closure to limit only one thread can access critical section, LazyMP provides Atomic context to let only one process can access the code in the specific block.
+                Like OpenMP uses "atomic{}" closure to limit only one thread can access critical section, EazyMP provides Atomic context to let only one process can access the code in the specific block.
               </p>
               <p class="lead">
-                User needs to import Atomic class from lazymp library. Atomic is context class but do nothing. It is just a anchor point for LazyMP to detect.
+                User needs to import Atomic class from EazyMP library. Atomic is context class but do nothing. It is just a anchor point for EazyMP to detect.
               </p>
               <p class="lead">
-                When LazyMP detects Atomic class, it will use "multiprocess.Manager" to provide a lock. Only the process with the lock can access the critical section.
+                When EazyMP detects Atomic class, it will use "multiprocess.Manager" to provide a lock. Only the process with the lock can access the critical section.
               </p>
             </div>
             <div class="col-md-5">
@@ -238,7 +258,7 @@
               <h3>CPU intensive tasks</h3>
 
                 <p class="lead">
-                We first test LazyMP with two CPU intensive tasks: busyloop and mandelbrot [1]. These type of tasks consume CPU computation rather than memory fetching. We can examine LazyMP performance without worring other factors(e.g., memory bandwidth, disk I/O, network I/O) with these tasks.
+                We first test EazyMP with two CPU intensive tasks: busyloop and mandelbrot [1]. These type of tasks consume CPU computation rather than memory fetching. We can examine EazyMP performance without worring other factors(e.g., memory bandwidth, disk I/O, network I/O) with these tasks.
               </p>
 
               <p class="lead">
@@ -248,53 +268,63 @@
                 Mandelbrot is invested by Pierre Fatou and Gaston Julia. It also requires much CPU comutation but less memory communication. In our test, we compute 1000 * 1000 mandelbrot graph.
               </p>
               <p class="lead">
-                According the experiment result, LazyMP can provide 5x~6x speedup in both cases.
+                According the experiment result, EazyMP can provide reasonable speedup.
+              </p>
+              <p class="lead">
+                Notice that although latedays server has more cores, its performance for Mandelbrot is lower than GHC server. The reason is because latedays server has slower CPU (2.4 GHz). GHC server's CPU is 3.2 GHz. In Mandelbrot, the reducer process needs to merge intermediate results. So shower CPU makes the reducer process spend more time on merging. The result is less speedup.
+              </p>
+              <p class="lead">
+                On the other hand, BusyLoop is pure CPU intensive task, so EazyMP scales pretty good in our tests.
               </p>
             </div>
             <div class="col-md-5">
               <h3> &nbsp;</h3>
-              <img src="image/chart/busyloop.png" width ="100%" align="right"></img><center><h5>BusyLoop Speedup: compare to no-lazyMP version</h5></center>
+              <img src="image/chart/busyloop.png" width ="100%" align="right"></img>
+              <img src="image/chart/busyloop1.png" width ="100%" align="right"></img><center><h5>BusyLoop Speedup: compare to no-EazyMP version</h5></center>
 
               <h3> &nbsp;</h3>
-
-              <img src="image/chart/mandelbrot.png" width ="100%" align="middle"></img><center><h5>Mandelbrot Speedup: compare to no-lazyMP version</h5></center>
+              <img src="image/chart/mandelbrot.png" width ="100%" align="right"></img>
+              <img src="image/chart/mandelbrot1.png" width ="100%" align="middle"></img><center><h5>Mandelbrot Speedup: compare to no-EazyMP version</h5></center>
             </div>
 
 
             <div class="col-md-12">
               <h3>Grep a single big file</h3>
-              <center><img src="image/chart/grep1.png" width ="500px" align="middle"></img><h5>Grep Single File Speedup: compare to no-lazyMP version</h5></center>
+              <center><img src="image/chart/grep1.png" width ="50%" align="middle"></img><img src="image/chart/grep3.png" width ="50%" align="middle"></img><h5>Grep Single File Speedup: compare to no-EazyMP version</h5></center>
               <p></p>
               <p class="lead">
                 A typical use case of processing a big file is grep. We write a test script that scans large file for any lines that contain the input word.
               </p>
               <p class="lead">
-                Naive version of this script will read each line in the file and do a search in these lines. In order to use LazyMP, the script is modified to strips the whole file into small block areas before scan. Then it checks each block in a for loop. The loop itself will not cause computing overhead. But it enables adding LazyMP annotation. So LazyMP will create process for each block area and scan the lines in these block in parallel.
+                Naive version of this script will read each line in the file and do a search in these lines. In order to use EazyMP, the script is modified to strips the whole file into small block areas before scan. Then it checks each block in a for loop. The loop itself will not cause computing overhead. But it enables adding EazyMP annotation. So EazyMP will create process for each block area and scan the lines in these block in parallel.
               </p>
               <p class="lead">
-                We used a 2GB text file for testing the script. The speedup is shown above. As we increase the process number, the speedup could be up to 5x in a 6 core server.
+                We used a 2GB text file for testing the script. The speedup is shown above. As we increase the process number, the speedup could be up to 5x in a 6 cores server and up to 12x in 12 cores server.
               </p>
               <p class="lead">
-                Of cause, in this case, the performance of the script is also affected by the size of block. Big size blocks reduce parallelism, small size blocks increase management overhead. The result we show in this report uses an optimized block size according to our experiment.
+                Notice in 6 cores server test, the performance of the program is lower when there are too much processes created. This causes management overhead. In 12 cores server, we believe the management overhead is still lower than the parallel benefit.
+              </p>
+              <p class="lead">
+                Of cause, in this case, the performance of the script is also affected by the size of block. Big size blocks reduce parallelism, small size blocks increase management overhead. The result we show in this report uses an optimized block size (400 KB) according to our experiment.
               </p>
             </div>
 
             <div class="col-md-12">
               <h3>Grep various files</h3>
-              <center><img src="image/chart/grep2.png" width ="500px" align="middle"></img><h5>Grep Various Files Speedup: compare to no-lazyMP version</h5>
+              <center><img src="image/chart/grep2.png" width ="50%" align="middle"></img><img src="image/chart/grep4.png" width ="50%" align="middle"></img><h5>Grep Various Files Speedup: compare to no-EazyMP version</h5>
 </center>
               <p></p>
               <p class="lead">
-                Another typical use case is processing a large amount of files. For example, scan in the log folder. The scan script can potentially check every log files in parallel. But programmer usually do it in a loop for quick development. Now they just add LazyMP annotation after the for loop.
+                Another typical use case is processing a large amount of files. For example, scan in the log folder. The scan script can potentially check every log files in parallel. But programmer usually do it in a loop for quick development. Now they just add EazyMP annotation after the for loop.
               </p>
               <p class="lead">
-                In this example, we do grep on more than 600 files, each with size around 5MB. The script checks all files (or the files in subdirectories) for lines that contain the input word. Each file is processed in a separate process by LazyMP. The result is shown above.
+                In this example, we do grep on 110 files, each with size around 50MB. The script checks all files (or the files in subdirectories) for lines that contain the input word. Each file is processed in a separate process by EazyMP. The result is shown above.
               </p>
               <p class="lead">
-                We notice the speedup is even better than the processing single file example. When the script is parallelized according to files, there is no overhead for striping the input.
+                We notice the speedup is even better than the processing single file example. We think this is because, different from the previous case, there is no overhead for striping the input in this test. The program performance shows that EazyMP has basically maximized the parallel speedup.
               </p>
               <p class="lead">
-                Besides performance, this test also verifies LazyMP can handle nested loop. As long as the system has resource for new process fork, the nested loop can be handled in parallel as well.
+                Besides performance, this test also verifies EazyMP can handle nested loop. As long as the system has resource for new process fork, the nested loop can be handled in parallel as well.
               </p>
             </div>
 
@@ -302,19 +332,25 @@
               <h3>Synchronization Tests</h3>
               <p></p>
               <p class="lead">
-                Previous tests don’t need synchronization. However, it’s a common requirement for parallel program. For example, if we want to do word count in multiple files, the count has to be synchronously updated. In LazyMP, there are 2 ways for this task. First option is using atomic method. Second option is using “shared union” annotation on the variables.
+                Previous tests don’t need synchronization. However, it’s a common requirement for parallel program. For example, if we want to do word count in multiple files, the count has to be synchronously updated. In EazyMP, there are 2 ways for this task. First option is using atomic method. Second option is using “shared reduce” annotation on the variables.
               </p>
               <p class="lead">
-                We tested these 2 methods using a word count script on 116 small text files. Every process scan a single file.
+                We tested these 2 methods using a word count script on hundreds of small text files. Every process scan a single file.
               </p>
               <p class="lead">
-                For using the atomic method in this script, the developer has to specify which block in the code would update the count. Then LazyMP will ensure atomicity by using lock. The result shows that lock causes a lot of overheads and the performance is actually decrease when using LazyMP version.
+                In order to use atomic method in this script, the developer has to specify which block in the code would update the shared count records. Then EazyMP will ensure atomicity by using lock. The result shows that lock causes a lot of overheads and the performance actually decreases when add EazyMP support. [TODO add test result!]
               </p>
               <p class="lead">
-                For using the “shared union” method, the developer needs to add annotation on the word count dict. Then LazyMP will help to aggregate the result. The result shows that when there are too many items in the dict, script performance will decrease.
+                We think there are 2 main reasons cause this performance decreasing. First, different processes compete for the same lock. So when they frequently ask for entering the critical block, multiple processes would be blocked. Second, process based solution causes extra overheads compared with thread based solution. Both lock and shared variable updates are actually IPC, which is much slower than communication between threads that in the same process.
               </p>
               <p class="lead">
-                Although these 2 methods can ensure the correctness, we think developers should not use LazyMP in the programs that have high synchronization requirement.
+                Next, if choose to use “shared reduce” method, the developer needs to add annotation on the word count dict. Then EazyMP will help to aggregate the result. The result shows that when there are too many items in the dict, script performance will decrease. [TODO add test result!]
+              </p>
+              <p class="lead">
+                The performance issue is mainly caused by IPC cost and the "reducing" phase. We have discussed IPC cost before. On the other hand, for the "reducing" overhead, the reducer process merges all intermediate results generated by multiple processes. If intermediate results are huge, the time that reducer process spends on merging would be more than the time that is saved by using multi-process.
+              </p>
+              <p class="lead">
+                Based on our experiments, although these 2 methods can ensure the correctness, we think developers should not use EazyMP in the programs that have high synchronization requirement.
               </p>
             </div>
           </div>
@@ -323,18 +359,54 @@
             <div class="col-md-12"><h2 class="featurette-heading"><a name="reference"></a>Reference</h2></div>
             <div class="col-md-12">
             <ul>
-              <li>[1] Mandelbrot. http://en.wikipedia.org/wiki/Mandelbrot_set</li>
+              <li>[1] Mandelbrot. http://en.wikipedia.org/wiki/Mandelbrot_set/</li>
               <li>[2] OpenMP. https://computing.llnl.gov/tutorials/openMP/</li>
               <li>[3] Cython. http://cython.org/</li>
             </ul>
             </div>
           </div>
-
+          <div class="row">
+            <div class="col-md-12"><h2 class="featurette-heading"><a name="listofwork"></a>LIST OF WORK BY EACH STUDENT</h2></div>
+            <div class="col-md-12">
+              <table class="table table-bordered">
+                <tr>
+                  <th>Item</th>
+                  <th>People</th>
+                </tr>
+                <tr class="active">
+                  <td>Brain Storming, Proposal</td>
+                  <td>San-Chuan, Jiajun</td>
+                </tr>
+                <tr>
+                  <td>Implementing Transator v.1</td>
+                  <td>San-Chuan</td>
+                </tr>
+                <tr class="active">
+                  <td>Implementing Benchmarks</td>
+                  <td>San-Chuan, Jiajung</td>
+                </tr>
+                <tr>
+                  <td>Implementing Transator v.2 - Shared Variables and Atomic Syntax</td>
+                  <td>San-Chuan, Jiajung</td>
+                </tr>
+                <tr class="active">
+                  <td>Speedup Experiments, Debug and Tuning</td>
+                  <td>San-Chuan, Jiajung</td>
+                </tr>
+                <tr>
+                  <td>Final Write Up</td>
+                  <td>San-Chuan, Jiajung</td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </div>
+
         <div class="col-md-2">
           <div id="mynav" style="top: 30px">
             <nav class="nav nav-pills nav-stacked hidden-xs hidden-sm">
               <li role="presentation"><a href="#summary">Summary</a></li>
+              <li role="presentation"><a href="#background">Background</a></li>
               <li role="presentation"><a href="#howtouse">How to use</a></li>
               <li role="presentation"><a href="#processparallelism">Process Parallelism</a>
               <li role="presentation"><a href="#translator"> Translator & Syntax</a></li>

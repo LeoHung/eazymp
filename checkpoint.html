@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>LazyMP</title>
+    <title>EazyMP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen"> -->
 <!--     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'> -->
@@ -28,7 +28,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">LazyMP</a>
+              <a class="navbar-brand" href="#">EazyMP</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
@@ -66,10 +66,10 @@
         <div class="col-md-12">
           <h2 class="featurette-heading">Summary</h2>
           <p class="lead">
-            We have developed a python-to-python translator which support "#pragma omp parallel for" annotation. According our two benchmarks "BusyLoop" and "Mandelbrot", LazyMP can provide near N/2x ~ Nx speedup on N cores machine.
+            We have developed a python-to-python translator which support "#pragma omp parallel for" annotation. According our two benchmarks "BusyLoop" and "Mandelbrot", EazyMP can provide near N/2x ~ Nx speedup on N cores machine.
           </p>
           <!-- <ul>
-            <li>Developed LazyMP translator which can support “#pragma omp parallel for”.</li>
+            <li>Developed EazyMP translator which can support “#pragma omp parallel for”.</li>
             <li>Implemented “Busy Loop” and “Mandelbrot” for benchmarks.</li>
             <li>Implemented Python threads and c OpenMP version benchmarks for comparison.</li>
           </ul> -->
@@ -80,14 +80,14 @@
 
       <div class="row">
         <div class="col-md-12">
-          <h2 class="featurette-heading">LazyMP Translator</h2>
+          <h2 class="featurette-heading">EazyMP Translator</h2>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-6">
           <p class="lead">
-            LazyMP currently can support "#pragma omp parallel for" syntax. It translates a for-loop into ProcessPool().map() pattern, which first defines inner block as a core function and then uses ProcessPool().map() to fork multiple processes to execute the core function with differet elements in iterations to make it run in parallel.
+            EazyMP currently can support "#pragma omp parallel for" syntax. It translates a for-loop into ProcessPool().map() pattern, which first defines inner block as a core function and then uses ProcessPool().map() to fork multiple processes to execute the core function with differet elements in iterations to make it run in parallel.
           </p>
           <p class="lead">
             User needs to write "#pragma omp parallel for" annotation nearby the for-loop to be paralled. Also, user needs to specify the shared variables (like the "data" in the right example) with "#pragma shared", so the code can join the stored values to the shared variables correctly.
@@ -114,7 +114,7 @@
             We launched experiments in GHC machine 33, which has 6 cores (12-virtual cores due to Hyper-threading).
           </p>
           <p class="lead">
-            According the experiments, we found that LazyMP has near N/2~N speedup, which is much better than Python thread implementation and is competible with C++ OpenMP implementation.
+            According the experiments, we found that EazyMP has near N/2~N speedup, which is much better than Python thread implementation and is competible with C++ OpenMP implementation.
           </p>
         </div>
         <div class="col-md-6">
@@ -137,13 +137,13 @@
       <div class="row">
         <div class="col-md-6">
           <p class="lead">
-            We have finished first version of LazyMP and corresponding speedup experiment. In the first version, it can only support "#pragma omp parallel for" syntax, and the variables are not "truly" shared. The annotated shared variables are copied to each process, and then joined after the for-loop.
+            We have finished first version of EazyMP and corresponding speedup experiment. In the first version, it can only support "#pragma omp parallel for" syntax, and the variables are not "truly" shared. The annotated shared variables are copied to each process, and then joined after the for-loop.
           </p>
           <p class="lead">
             In the next step, we plan to implement shared variable and atomic syntax feature by using Namespace, Lock, dict, list in Python multiprocess package. This approach will launch a process to provide shared variables for each worker process. It may increase overhead due to communication, but it can support lock and atomic syntax.
           </p>
           <p class="lead">
-            Also, we will implement benchmark programs for shared variable version LazyMP to evaluate its speedup performance.
+            Also, we will implement benchmark programs for shared variable version EazyMP to evaluate its speedup performance.
           </p>
         </div>
         <div class="col-md-6">
@@ -227,14 +227,14 @@
         <div class="col-md-6">
           <h3>Package Dependency</h3>
             <p class="lead">
-              We used <a href="https://github.com/uqfoundation/pathos">pathos</a> to fix the problem that some user functions cannot be used in official multiprocess.Processpool() correctly. In those cases, it will pop out PicklingError. Pathos can fix the problem; however, we are speculating pathos maybe one of bottleneck of LazyMP. We are trying to remove the package depedency.
+              We used <a href="https://github.com/uqfoundation/pathos">pathos</a> to fix the problem that some user functions cannot be used in official multiprocess.Processpool() correctly. In those cases, it will pop out PicklingError. Pathos can fix the problem; however, we are speculating pathos maybe one of bottleneck of EazyMP. We are trying to remove the package depedency.
             </p>
         </div>
 
         <div class="col-md-6">
           <h3>Overhead of Shared Vriables</h3>
             <p class="lead">
-              We plan to implement shared variable feature for LazyMP. Because the feature will rely on a process to hold shared variables and process communication, we are speculating that it may hurt performance.
+              We plan to implement shared variable feature for EazyMP. Because the feature will rely on a process to hold shared variables and process communication, we are speculating that it may hurt performance.
             </p>
         </div>
       </div>
