@@ -209,8 +209,9 @@ class PragmaTranslator:
     SHARED_VARIABLES = 2
     SHARED_DICT = 3
     SHARED_LIST = 4
-    SHARED_DICT_REDUCE = 5
-    ELSE = 6
+    SHARED_NUMBER = 5
+    SHARED_DICT_REDUCE = 6
+    ELSE = 7
 
     @staticmethod
     def parse(pragma_tokens):
@@ -220,7 +221,8 @@ class PragmaTranslator:
             (PragmaTranslator.shared_dict_reduce_prog, PragmaTranslator.SHARED_DICT_REDUCE),
             (PragmaTranslator.parallel_prog, PragmaTranslator.PARALLEL_FOR),
             (PragmaTranslator.shared_dict_prog, PragmaTranslator.SHARED_DICT),
-            (PragmaTranslator.shared_list_prog, PragmaTranslator.SHARED_LIST)
+            (PragmaTranslator.shared_list_prog, PragmaTranslator.SHARED_LIST),
+            (PragmaTranslator.shared_number_prog, PragmaTranslator.SHARED_NUMBER)
         ]
 
         for reg_prog, return_type in reg_type:
@@ -344,7 +346,8 @@ class Translator:
                     self.writer.write(
                         Template.assign_variable(
                             left="_namespace." + registered_variable,
-                            right=return_variable
+                            right=registered_variable,
+                            indention=parallel_struct['indention']
                         )
                     )
 
@@ -384,10 +387,14 @@ class Translator:
                     )
 
             # insert block
+
+            block_text = "\n".join(block)
+            # replace with Atomic() -> with _lock()
+            block_text = re.sub("with[ ]+Atomic\([^)]*\)", "with _lock", block_text)
+
             # replace shared dict reduce with __shared__['%s']
             # replace shared dict, list with proxy_%s
             # replace shared number with _namespace.%s
-            block_text = "\n".join(block)
             for registered_variable, variable_type in self.shared_variables.dump():
                 if variable_type == SharedVariables.SHARED_DICT_REDUCE:
                     block_text = block_text.replace(registered_variable, "__shared__['%s']" % registered_variable)
@@ -395,6 +402,7 @@ class Translator:
                     block_text = block_text.replace(registered_variable, "proxy_%s" % registered_variable)
                 elif variable_type == SharedVariables.SHARED_NUMBER:
                     block_text = block_text.replace(registered_variable, "_namespace.%s" %registered_variable)
+
 
             self.writer.write(block_text)
 
@@ -463,8 +471,9 @@ class Translator:
                     # copy back from proxy number
                     self.writer.write(
                         Template.assign_variable(
-                            left=return_variable,
-                            right="_namespace." + registered_variable
+                            left=registered_variable,
+                            right="_namespace." + registered_variable,
+                            indention=parallel_struct['indention']
                         )
                     )
 
@@ -580,8 +589,8 @@ def run():
     else:
         rest_options = ""
 
-    # os.system("python " + tmp_outputfilename + " " + rest_options)
-    # os.remove(tmp_outputfilename)
+    os.system("python " + tmp_outputfilename + " " + rest_options)
+    os.remove(tmp_outputfilename)
 
 if __name__ == "__main__":
     run()
