@@ -299,7 +299,7 @@
                 Naive version of this script will read each line in the file and do a search in these lines. In order to use EazyMP, the script is modified to strips the whole file into small block areas before scan. Then it checks each block in a for loop. The loop itself will not cause computing overhead. But it enables adding EazyMP annotation. So EazyMP will create process for each block area and scan the lines in these block in parallel.
               </p>
               <p class="lead">
-                We used a 2GB text file for testing the script. The speedup is shown above. As we increase the process number, the speedup could be up to 5x in a 6 cores server and up to 12x in 12 cores server.
+                We used a 2GB text file for testing the script. The speedup is shown above. As we increase the process number, the speedup could be up to 5x in a 6 cores server and up to 11x in 12 cores server.
               </p>
               <p class="lead">
                 Notice in 6 cores server test, the performance of the program is lower when there are too much processes created. This causes management overhead. In 12 cores server, we believe the management overhead is still lower than the parallel benefit.
