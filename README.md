@@ -8,13 +8,13 @@
 
 or 
 
-    pip install lazymp --process-dependency-links
+    pip install eazymp --process-dependency-links
 
 ## Sample Use Case
 
 You can make your for-loop run in parallel just by adding "#pragma omp parallel for" near by the for-loop statement, just like what is done by openmp in c language. 
 
-Besides, you need to annotated the outside variables which will be assigned value in the for-loop with annotation "#pragma shared".
+Besides, you need to annotated the outside variables which will be assigned value in the for-loop with annotation "#pragma shared dict/list/number".
 
 ### Example Code
 
@@ -44,7 +44,7 @@ All you need is just adding "#pragma omp parallel for" near the for loop, and at
 
 ## Dependency 
 
-PyMP used "pathos" package developed by Michael McKerns and his group members. To get more details:
+EazyMP used "pathos" package developed by Michael McKerns and his group members. To get more details:
 
     M.M. McKerns, L. Strand, T. Sullivan, A. Fang, M.A.G. Aivazis,
     "Building a framework for predictive science", Proceedings of
