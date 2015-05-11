@@ -6,10 +6,6 @@
 
 	python setup.py install    
 
-or 
-
-    pip install eazymp --process-dependency-links
-
 ## Sample Use Case
 
 You can make your for-loop run in parallel just by adding "#pragma omp parallel for" near by the for-loop statement, just like what is done by openmp in c language. 
