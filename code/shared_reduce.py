@@ -1,6 +1,6 @@
 def function():
 
-    my_dict = dict() #pragma shared reduce
+    my_dict = dict() #pragma shared dict reduce
 
     for i in range(100): #pragma omp parallel for
         ... do something ...
@@ -21,6 +21,7 @@ def function():
         ... do something ...
 
         __shared__['my_dict'][i] = result
+        return __shared__
 
     from pathos.multiprocessing import ProcessingPool
     __shared__ = ProcessingPool(num_process).map(core, range(100))

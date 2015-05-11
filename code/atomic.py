@@ -1,8 +1,7 @@
 
 def function():
 
-    from lazymp.atmoic import Atomic
-
+    from eazymp.atmoic import Atomic
     with Atomic():
         ... critical section
 
@@ -15,7 +14,7 @@ def function():
     _manager = Manager()
     _lock = _manager.Lock()
 
-    with __lock:
+    with _lock:
         ... critical section
 
 
