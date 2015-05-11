@@ -213,12 +213,12 @@
 
 
             <div class="col-md-7">
-              <h3>#pragma shared reduce</h3>
+              <h3>#pragma shared dict reduce</h3>
               <p class="lead">
-                EazyMP provides another syntax to indicate shared variables: "#pragma shared reduce".
+                EazyMP provides another syntax to indicate shared variables: "#pragma shared dict reduce".
               </p>
               <p class="lead">
-                Instead of using "multiprocess.Manager" to provide shared variable process, "#pragma shared reduce" lets each process access it's local variable first, and then reduces them after for-loop finishes.
+                Instead of using "multiprocess.Manager" to provide shared variable process, "#pragma shared dict reduce" lets each process access it's local variable first, and then aggregates them after for-loop finishes.
               </p>
               <p class="lead">
                 EazyMP translator first adds __shared__ dictionary into core function. The operations related to the shared variable will be redirect to the __shared__ variable, and the core function will return __shared__ variable finally. EazyMP will add a block of code to reduce __shared__ variables into the original varible.
