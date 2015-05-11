@@ -197,13 +197,10 @@
             <div class="col-md-7">
               <h3>#pragma shared</h3>
               <p class="lead">
-                When "#pragma shared" is detected, EazyMP translator will use "multiprocess.Manager" to generate a shared proxy variable for the original variable, and redirect all the variable operations to the proxy variable.
+                When "#pragma shared" is detected, EazyMP translator will use "multiprocess.Manager" to generate a proxy for the original variable, and the operations to the shared variable in core function will be redirected to the proxy.
               </p>
               <p class="lead">
-                "multiprocess.Manager" launches a process for shared variable operations and return a proxies for worker processes to accesss the shared variable.
-              </p>
-              <p class="lead">
-                After all operations finish, EazyMP translator adds a code to copy the data back from the proxy variable to the original variable.
+                "multiprocess.Manager" creates proxyies for the shared variables and propagates the proxyies to all subprocesses. A subprocess can manipulate the shared variable in the master process through the proxy.
               </p>
             </div>
             <div class="col-md-5">
