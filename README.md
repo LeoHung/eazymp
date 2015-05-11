@@ -30,10 +30,10 @@ For a code is running mandelbrot as follows:
 		
 		return data
 	
-All you need is just adding "#pragma omp parallel for" near the for loop, and attaching "#pragma shared" to the variable "data" (because it is outside of for-loop, and it will be assigned value in the loop)
+All you need is just adding "#pragma omp parallel for" near the for loop, and attaching "#pragma shared dict reduce" to the variable "data" (because it is outside of for-loop, and it will be assigned value in the loop)
 
 	def run_mandelbrot(size_x, size_y):
-		data = {} #pragma shared
+		data = {} #pragma shared dict reduce
 
 		for row in range(size_x):  #pragma omp parallel for
 			for col in range(size_y):
