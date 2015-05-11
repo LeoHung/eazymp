@@ -1,4 +1,4 @@
-from lazymp.atomic import Atomic
+from eazymp.atomic import Atomic
 def iplusplus(num_round):
     global_i = 0 #pragma shared number
     for _ in range(num_round): #pragma omp parallel for

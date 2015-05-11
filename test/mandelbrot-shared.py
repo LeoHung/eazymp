@@ -1,5 +1,3 @@
-from lazymp.helpers import join_dict
-from lazymp.helpers import join_shared
 from PIL import Image
 from datetime import datetime
 from multiprocessing.pool import ThreadPool
@@ -47,7 +45,7 @@ def mandelbrot(row, col, size_x, size_y):
 
 
 def run_mandelbrot(size_x, size_y, num_thread):
-    from multiprocessing import Manager 
+    from multiprocessing import Manager
 
     manager = Manager()
     data = manager.dict()
@@ -57,14 +55,14 @@ def run_mandelbrot(size_x, size_y, num_thread):
             tmp = mandelbrot(row, col, size_x, size_y)
             data[(row, col)] = (tmp[0], tmp[1], tmp[2])
 
-    from pathos.multiprocessing import ProcessingPool    
+    from pathos.multiprocessing import ProcessingPool
     ProcessingPool(num_thread).map(core, xrange(size_x))
-    
+
     ret = {}
     for k, v in data.items():
         ret[k] = v
-    
-    return ret 
+
+    return ret
 
 
 if __name__ == "__main__":

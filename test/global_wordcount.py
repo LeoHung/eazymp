@@ -20,7 +20,7 @@ def word_count(dir_path):
    return word_count_result
 
 def word_count_mp(dir_path):
-   from lazymp.atomic import Atomic
+   from eazymp.atomic import Atomic
 
    word_count_result = {} #pragma shared dict
    for lists in os.listdir(dir_path): #pragma omp parallel for

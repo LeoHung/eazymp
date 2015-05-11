@@ -52,7 +52,6 @@ def run_mandelbrot(size_x, size_y):
 
     return data
 
-
 def run_slow_mandelbrot(size_x, size_y):
     data = {}
 
