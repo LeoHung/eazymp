@@ -82,7 +82,7 @@
                 EazyMP is tested on GHC server (with 6 cores) and latedays server (with 12 cores) with several test scripts "BusyLoop", "Mandelbrot" and file grep.
               </p>
               <p class="lead">
-                According to the experiments, we show that EazyMP can provide up to N/2x ~ Nx (N is the number of cores) speedup comparing to sequential code.
+                According to the experiments, we show that EazyMP can provide scalable speedup comparing to sequential code.
               </p>
             </div>
           </div>
@@ -94,13 +94,13 @@
                 One of the promising features in OpenMP is the easiness to program. All programers need to do is adding annotations to tag the block to parallel. Due to Global Interpreter Lock mechanism in Python, to our best knowledge, there is no easy way which enables standard Python to integrate with OpenMP. The programmers need to learn Cython language or new parallel Python frameworks, which takes much extra effort.
               </p>
               <p class="lead">
-                EazyMP is a python-to-python compiler which transforms original python code to a parallelized version: "for" loop code to multi-process code (like Pool().map()).
+                EazyMP is a python-to-python translator which transforms original python code to a parallelized version: "for" loop code to multi-process code (like Pool().map()).
               </p>
               <p class="lead">
-                With our “compiler”, the users can optimize the code to its parallelized version easily by just adding annotations on the for loop.
+                With our translator, the users can optimize the code to its parallelized version easily by just adding annotations on the for loop.
               </p>
               <p class="lead">
-                We think cpu intensive programs process multiple data can benefit from EazyMP the most. Like Mandelbort. In other scenario, program can still take advantage of multiple cores but abuse of EazyMP may also generate extra overheads (e.g. scattering variables, gathering return values).
+                We think cpu intensive programs process multiple data can benefit from EazyMP the most. Like Mandelbort. In other scenario, program can still take advantage of multiple cores but abuse of EazyMP may also generate extra overheads (e.g. communication overhead for shared variables).
               </p>
             </div>
           </div>
@@ -108,14 +108,22 @@
           <div class="row">
             <div class="col-md-12"><h2 class="featurette-heading"><a name="howtouse"></a>How to Use</h2></div>
             <div class="col-md-7">
-              <h3>Add Syntax</h3>
+              <h3>Add Annotation</h3>
               <p class="lead">
-                EazyMP's syntax style is inspired by OpenMP: user just needs to add annotations on the block to be parallelized. (1) Add "#pragma omp parallel for" nearby the for-loop to run the loop in parallel, and (2) add "#pragma shared" to indicate which variable is shared among processes.
+                EazyMP's syntax style is inspired by OpenMP: user just needs to add annotations on the block to be parallelized.
+              </p>
+              <h4>#pragma omp parallel for</h4>
+              <p class="lead">
+                Add "#pragma omp parallel for" nearby the for-loop to run the loop in parallel.
+              </p>
+              <h4>Shared Variables<h4>
+              <p class="lead">
+                User needs to specify which variables are shared among processes. We provides two types of shared variable annotation: "#pragma shared dict/list/number" and "#pragma shared dict reduce", which will be discussed later.
               </p>
 
               <h3>EazyMP It!</h3>
               <p class="lead">
-                Enter "EazyMP code.py", and then EazyMP will translate your code into parallized code and run it in parallel.
+                Enter "eazymp code.py", and then EazyMP will translate your code into parallized code and run it in parallel.
               </p>
             </div>
             <div class="col-md-5">
@@ -130,6 +138,7 @@
 
           <div class="row">
             <div class="col-md-12">
+              <h3>Why multi-process parallelism?</h3>
               <p class="lead">
                 Openmp uses multi-thread for parallelism. However, EazyMP is based on multi-process. Why do we choose process based parallelism?
               </p>
@@ -140,7 +149,7 @@
                 <b>Thread parallelism</b> Native Python thread requires GIL before running. So only a single thread can be active at a time in the Python interpreter.
               </p>
               <p class="lead">
-                <b>Cython extension</b> Cython [3] helps to add C extensions in Python program. So programmers can potentially use C thread lib for parallelism. Although it’s a feasible way, it requires programmers learn Cython, and C language. And the program tends to be complicated when Cython is used. What is worse, programmer may need to refactor all existing code if he want to add parallelism.
+                <b>Python extensions</b> There are some extension of Python can relax GIL restriction. For example, Cython [3] helps to add C extensions in Python program. So programmers can potentially use C thread lib for parallelism. Although it’s a feasible way, it requires programmers learn Cython, and C language. And the program tends to be complicated when Cython is used. What is worse, programmer may need to refactor all existing code if he want to add parallelism.
               </p>
             </p>
             <p class="lead">
@@ -159,7 +168,26 @@
               Despite the overheads and limitations, process based methods makes true parallelism in Python possible. The performance of the program increases with multiple process execution.
               EazyMP hides multiprocess detail. And it also tries to reduce the overheads.
             </p>
+            <h3>How do processes share variables?</h3>
+            <p class="lead">
+              Because processes do not share memory space, it needs additional effort to make processes can access shared variables.
+            </p>
+            <p class="lead">
+              EazyMP provides two types of shared variable: proxy-based shared variable and reduce-based shared variable.
+            </p>
+            <h4>proxy-based shared variable</h4>
+              <p class="lead">
+                Master process will create proxies for shared varaibles, and propagate them to the subprocesses. Therefore, a subprocess can access the shared variables on the master process through the proxyes.
+              </p>
+            <h4>reduce-based shared variable</h4>
+              <p class="lead">
+                Proxy-based shared variable needs communication between master process and subprocesses, which can generate overhead. Therefore, EazyMP provides another type of shared variable: reduced-based shared variable.
+              </p>
+              <p class="lead">
+                Each subprocess has its cache of shared variable. During the computation, subprocess accesses its caches and does not synchronize with each other. After they finish the computation in core function, they will return the caches to the master process, and the master aggregate the caches back to the shared variables.
+              </p>
             </div>
+
           </div>
 
           <div class="row">
@@ -197,6 +225,9 @@
             <div class="col-md-7">
               <h3>#pragma shared dict/list/number</h3>
               <p class="lead">
+                "#pragma shared dict/list/number" indicates that the variable is a proxy-based variable.
+              </p>
+              <p class="lead">
                 When "#pragma shared dict/list/number" is detected, EazyMP translator will use "multiprocess.Manager" to generate a proxy for the original variable, and the operations to the shared variable in core function will be redirected to the proxy.
               </p>
               <p class="lead">
@@ -212,7 +243,7 @@
             <div class="col-md-7">
               <h3>#pragma shared dict reduce</h3>
               <p class="lead">
-                EazyMP provides another syntax to indicate shared variables: "#pragma shared dict reduce".
+                "#pragma shared dict reduce" indicates that the variable is a reduce-based shared variable.
               </p>
               <p class="lead">
                 Instead of using "multiprocess.Manager" to provide shared variable process, "#pragma shared dict reduce" lets each process access it's local variable first, and then aggregates them after for-loop finishes.
@@ -337,22 +368,22 @@
               <h3>Frequent Synchronization Tests</h3>
               <p></p>
               <p class="lead">
-                Previous tests don’t need synchronization. However, it’s a common requirement for parallel program. For example, if we want to do "word count" in multiple files, the count has to be synchronously updated frequently. In EazyMP, there are 2 ways for this task. First option is using atomic method. Second option is using “shared reduce” annotation on the variables.
+                Previous tests don’t need synchronization. However, it’s a common requirement for parallel program. For example, if we want to do "word count" in multiple files, the count has to be synchronously updated frequently. In EazyMP, there are 2 ways for this task: proxy-based shared variable, and reduce-based shared variable.
               </p>
               <p class="lead">
                 We tested these 2 methods using a word count script on hundreds of small text files. Every process scan a single file. We conducted experiments on Latedays machine.
               </p>
               <p class="lead">
-                In order to use atomic method in this script, the developer has to specify which block in the code would update the shared count records. Then EazyMP will ensure atomicity by using lock. The result shows that lock causes a lot of overheads and the performance actually decreases when add EazyMP support. Multi-process version "word count" can be 368.73 times slower than sequential version using 12 processes.
+                In order to use atomic method in this script, the developer has to specify which block in the code would update the shared count records. We first test proxy-based shared variable with Atomic context. The result shows that lock causes a lot of overheads and the performance actually decreases when add EazyMP support. Multi-process version "word count" can be 368.73 times slower than sequential version using 12 processes.
               </p>
               <p class="lead">
                 We think there are 2 main reasons cause this performance decreasing. First, different processes compete for the same lock. So when they frequently ask for entering the critical block, multiple processes would be blocked. Second, process based solution causes extra overheads compared with thread based solution. Both lock and shared variable updates are actually Inter Process Communication (IPC), which is much slower than communication between threads that in the same process.
               </p>
               <p class="lead">
-                Next, if choose to use “shared reduce” method, the developer needs to add annotation "#pragma shared dict reduce" on the count dictionary. Then EazyMP will help to aggregate the result. The result shows that when there are too many items in the dict, script performance will decrease. Multi-process version (12 processes) code is about 8x slower than sequential code.
+                Next, we test reduce-based shared variable , the developer needs to add annotation "#pragma shared dict reduce" on the count dictionary. Then EazyMP will help to aggregate the result. The result shows that when there are too many items in the dict, script performance will decrease. Multi-process version (12 processes) code is about 8x slower than sequential code.
               </p>
               <p class="lead">
-                The performance issue is mainly caused by IPC cost and the "reducing" phase. Beside IPC cost, the master process needs to merge all intermediate results generated by subprocesses. If intermediate results are huge, the time that master process spends on merging would be more than the time that is saved by using multi-process.
+                The performance issue is mainly caused by IPC cost and the "reducing" phase. Besides IPC cost, the master process needs to merge all intermediate results generated by subprocesses. If intermediate results are huge, the time that master process spends on merging would be more than the time that is saved by using multi-process.
               </p>
               <p class="lead">
                 Based on our experiments, although these 2 methods can ensure the correctness, we think developers should not use EazyMP in the programs that have frequent synchronization requirement.
